@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "C:\\ProgramData\\Anaconda3\\envs\\PhotoThisDay\\python.exe",
+    "python.condaPath": "C:\\ProgramData\\Anaconda3\\Scripts\\conda.exe",
+    "python.linting.pylintArgs":["--generate-members"]
+}

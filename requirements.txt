@@ -1,0 +1,12 @@
+Pillow
+timezonefinder
+pytz
+urllib3
+certifi
+chardet
+idna
+requests
+scipy
+cmake
+dlib
+face_recognition
