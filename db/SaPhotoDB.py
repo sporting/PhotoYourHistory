@@ -56,7 +56,8 @@ class dbPhotoHelper:
             (ID INTEGER PRIMARY KEY AUTOINCREMENT, 
             DIR             TEXT,
             RECURSIVE       INTEGER DEFAULT 0,
-            PARSER_UTC_DATE      DATETIME
+            PARSER_UTC_DATE      DATETIME,
+            MONITOR         INTEGER DEFAULT 1
             );''')
 
             cur.execute('''CREATE INDEX IF NOT EXISTS PHOTOS_DATE_IDX ON PARSER_DIRECTORY ( DIR,PARSER_UTC_DATE );''')
@@ -125,20 +126,22 @@ class dbPhotoHelper:
             self.conn.rollback()
             print("insertPhotoIfNotExist:"+str(e))
 
-    def insertDir(self,log):
+    def insertDirIfNotExist(self,log):
         #log = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
         #     ('2006-04-05', 'BUY', 'MSFT', 1000, 72.00),
         #     ('2006-04-06', 'SELL', 'IBM', 500, 53.00),
         #    ]
         cur = self.conn.cursor()
         try:
-            d = log[0]
-            cur.execute('''DELETE FROM PARSER_DIRECTORY WHERE DIR=? ;''',[(d)])
-            cur.execute('''INSERT INTO PARSER_DIRECTORY (DIR, RECURSIVE, PARSER_UTC_DATE) VALUES (?,?,?);''',log)
-            self.conn.commit()
+            cur.execute('''SELECT * FROM PARSER_DIRECTORY WHERE DIR=? ''',(log[0],))
+            r = cur.fetchone()
+            if not r:
+                print('new dir = '+log[0])
+                cur.execute('''INSERT INTO PARSER_DIRECTORY (DIR, RECURSIVE, PARSER_UTC_DATE) VALUES (?,?,?);''',log)
+                self.conn.commit()
         except Exception as e:
             self.conn.rollback()
-            print("insertDir:"+str(e))
+            print("insertDirIfNotExist:"+str(e))
 
     def insertDirs(self,logs):
         #log = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
@@ -167,15 +170,15 @@ class dbPhotoHelper:
             print("updateDir:"+str(e))
 
 
-    def getDirs(self):        
+    def getMonitorDirs(self):        
         try:
-            cur = self.conn.cursor()
-            cur.execute('''SELECT * FROM PARSER_DIRECTORY''')
+            cur = self.conn.cursor()        
+            cur.execute('''SELECT * FROM PARSER_DIRECTORY WHERE MONITOR=1''')
             rows = cur.fetchall()
 
             return rows
         except Exception as e:
-            print("getDirs:"+str(e))
+            print("getMonitorDirs:"+str(e))
 
     def getMinPhotoUtcTS(self):
         try:

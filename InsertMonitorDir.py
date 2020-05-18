@@ -1,17 +1,28 @@
 # -*- coding: UTF-8 -*-
-import sys
+from synology.FileParser import DirectoryHelper
 from db.SaPhotoDB import dbPhotoHelper
+import sys
 
 """
-    Insert the monitor folder to database
+    Prepare your photo database.
+    List photo folders that you want to monitor in nas.
 """
 
-def InsertMonitorDir(folders):   
+def autoInsertMonitorDir(rootdir):
+    """
+        Search sub folder in the root folder that contains some files.
+        Maintain the database.
+    """
     dbh = dbPhotoHelper()
+    fdh = DirectoryHelper()
+    folders = fdh.listHasFilesDirectories(rootdir)  
+    
     for folder in folders:
-        dbh.insertDir((folder,False,None))    
+        print(folder)
+        dbh.insertDirIfNotExist((folder,False,None))    
 
 if __name__ == "__main__":
     if len(sys.argv[1:])>=1:
-        InsertMonitorDir(sys.argv[1:])
-
+        ps = sys.argv[1:]
+        for p in ps:
+            autoInsertMonitorDir(p)

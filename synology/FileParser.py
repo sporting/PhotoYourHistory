@@ -18,7 +18,6 @@ class DirectoryHelper:
             if p.find('/@eaDir')<0 and p.find('/#recycle')<0 and p.find('/.thumbnail')<0 and (len(f)>0):
                 yield p
 
-
 #mtime modify date
 #ctime create date
 #atime access date

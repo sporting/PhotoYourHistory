@@ -26,10 +26,10 @@ def IndexingNewImageFile(forcedAll=False):
     imgfh = ImageFileHelper()
 
     #default monitor folder
-    #dirs = dbh.getDirs()
+    #dirs = dbh.getMonitorDirs()
     #if len(dirs)<=0:
-    #    dbh.insertDir((DefaultMonitorDir,True,None))
-    dirs = dbh.getDirs()
+    #    dbh.insertDirIfNotExist((DefaultMonitorDir,True,None))
+    dirs = dbh.getMonitorDirs()
 
     i = 0
     currentDT = tzh.getUTCTime(datetime.now())
@@ -93,9 +93,8 @@ def IndexingNewImageFile(forcedAll=False):
                 dbh.insertPhoto(log)
             else:
                 dbh.updatePhoto(dd,fname,currentDT)
-        #update the last index utc datetime
-        ct = tzh.getUTCTime(datetime.now())        
-        dbh.updateDir(dth.datetimeToStr(ct),d['DIR'])
+        #update the last index utc datetime   
+        dbh.updateDir(currentDT,d['DIR'])
         dbh.obseletePhoto(d['DIR'],currentDT)
 
 if __name__ == "__main__":

@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 import os
 from datetime import datetime
-from SaPhotoDB import dbPhotoHelper
-from TimeZoneHelper import TimeZoneHelper
-from DateTimeHelper import DateTimeHelper
-from ExifHelper import ExifHelper
-from FileParser import ImageFileHelper
+from db.SaPhotoDB import dbPhotoHelper
+from date.TimeZoneHelper import TimeZoneHelper
+from date.DateTimeHelper import DateTimeHelper
+from graph.ExifHelper import ExifHelper
+from synology.FileParser import ImageFileHelper
 
 """
     Update all the photo_utc_date field
