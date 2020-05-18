@@ -7,9 +7,18 @@ from date.DateTimeHelper import DateTimeHelper
 from graph.ExifHelper import ExifHelper
 from synology.FileParser import ImageFileHelper
 
+
+"""
+    Parse all the photos from your monitor folders in database.
+    Extract every photo information and exif, then store in database.
+"""
+
 DefaultTimeZone = 'Asia/Taipei'
 
 def IndexingNewImageFile(forcedAll=False):   
+    """
+        Monitor the changed photos from the last parser time.
+    """
     dbh = dbPhotoHelper()
     tzh = TimeZoneHelper(DefaultTimeZone)
     dth = DateTimeHelper()

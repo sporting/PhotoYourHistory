@@ -4,6 +4,10 @@ from PIL.ExifTags import TAGS, GPSTAGS
 from datetime import datetime
 from pytz import timezone
 
+"""
+    class uses to fetch and process the image exif information
+"""
+
 class ExifHelper:
     DATETIME_FORMAT = '%Y:%m:%d %H:%M:%S' # YYYY-MM-DD HH:MM:SS
     TAG_SKIP_MARKERNOTE='MakerNote'

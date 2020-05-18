@@ -3,6 +3,10 @@ import sqlite3
 import json
 from db.JsonEncoder import MyEncoder
 
+""" 
+    system table
+"""
+
 class dbUsersHelper:
     def __init__(self):
         self.conn = None

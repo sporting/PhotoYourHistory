@@ -3,6 +3,11 @@ import sqlite3
 import json
 from db.JsonEncoder import MyEncoder
 
+""" 
+    Initial the sqlite3 database and create tables, indexes.
+    To store monitor folders and all the photo information.
+"""
+
 class dbPhotoHelper:
     def __init__(self):
         self.conn = None

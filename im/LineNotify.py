@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
 import requests, os
- 
+
+"""
+    Line Notify API handler
+"""
+
 class LineNotify():
     def __init__(self, token):
         self.token = token

@@ -3,6 +3,12 @@
 import os
 from graph.ImageProcess import ImageProcessHelper
 
+"""
+    Get the photo thumbnail 
+    if there was thumbnail in synology thumbnail folder then return.
+    if not, create thumbnail 
+"""
+
 class ImageThumbnailGetter:
     ImageHelper = ImageProcessHelper()
     def thumbnail(self,pic):                      

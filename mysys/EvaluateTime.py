@@ -1,6 +1,9 @@
 # -*- coding: UTF-8 -*-
 from time import time
 
+"""
+    The class uses to evaluate the process time.
+"""
 class EvaluateTimeHelper:
     def start(self,tag):
         self.tag = tag

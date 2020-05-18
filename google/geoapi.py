@@ -2,6 +2,10 @@
 import googlemaps
 from functools import reduce
 
+""" 
+    Use google gecode to get the address from gps
+"""
+
 class GeoHelper():
     def __init__(self,key):
         self.gmaps = googlemaps.Client(key=key)

@@ -2,6 +2,10 @@
 import sys
 from db.SaPhotoDB import dbPhotoHelper
 
+"""
+    Insert the monitor folder to database
+"""
+
 def InsertMonitorDir(folders):   
     dbh = dbPhotoHelper()
     for folder in folders:

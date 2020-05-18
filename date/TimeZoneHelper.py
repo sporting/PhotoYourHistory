@@ -3,6 +3,10 @@ from timezonefinder import TimezoneFinder
 from datetime import datetime
 from pytz import timezone
 
+
+"""
+    This class uses to do all the timezone translate function.
+"""
 class TimeZoneHelper:
     def __init__(self,localTimeZone):
         self.tf = TimezoneFinder()

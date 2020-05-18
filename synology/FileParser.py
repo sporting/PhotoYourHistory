@@ -3,9 +3,16 @@ import os
 import fnmatch
 from datetime import datetime
 
+"""
+    Class logic depends on the synology nas.
+"""
+
 class DirectoryHelper:
-    #list all directories contain files
     def listHasFilesDirectories(self,path):
+        """
+            List all directories that contain files
+            except #eaDir, #recycle, #.thumbnail
+        """
         for p,d,f in os.walk(path):
             #for synology nas 
             if p.find('/@eaDir')<0 and p.find('/#recycle')<0 and p.find('/.thumbnail')<0 and (len(f)>0):
@@ -18,6 +25,9 @@ class DirectoryHelper:
 class ImageFileHelper:
     EXTENSIONS = ['*.jpg', '*.jpeg', '*.png'] 
     def getFiles(self,path,localtimestamp=None,recursive=False):
+        """
+            List image files
+        """
         for dirPath, dirNames, fileNames in os.walk(path):
             for ext in self.EXTENSIONS:
                 for filename in fnmatch.filter(fileNames, ext):                    

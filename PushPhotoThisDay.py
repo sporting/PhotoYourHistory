@@ -11,10 +11,19 @@ from im.LineNotify import LineNotify
 from google.geoapi import GeoHelper
 from mysys.EvaluateTime import EvaluateTimeHelper
 
+"""
+    Search photos in this date on the past several years
+    and Line the random photos to someone who cares about this photo.
+"""
+
 DefaultTimeZone = 'Asia/Taipei'
 timeHelper = EvaluateTimeHelper()
 
 def GetManyYearPhotoDates(currentLocalDT,catalogs):
+    """
+        From users care lists, to find out the past date.
+        2020-05-20, 2019-05-20, 2018-05-20, 2017-05-20, 2016-05-20...etc
+    """
     dbh = dbPhotoHelper()
     tzh = TimeZoneHelper(DefaultTimeZone)
     dth = DateTimeHelper()
@@ -33,6 +42,9 @@ def GetManyYearPhotoDates(currentLocalDT,catalogs):
         yield datetime(y,nowMonth,nowDay)
 
 def GetPhotosByPhotoDates(photoDates,catalogs):
+    """
+        Get the random photo path in your photo database.
+    """
     dbh = dbPhotoHelper()
     dth = DateTimeHelper()   
     tzh = TimeZoneHelper(DefaultTimeZone) 
@@ -46,6 +58,9 @@ def GetPhotosByPhotoDates(photoDates,catalogs):
         yield (dt,map(lambda row: {'DIR':row['DIR'],'FILE_NAME':row['FILE_NAME'],'GPS':row['GPS']},dataRows))
 
 def GetPhotoThumbnail(photoFileNames):
+    """
+        Create and get your photo thumbnail path.
+    """
     thumbnailGetter = ImageThumbnailGetter()
     for yearData in photoFileNames:
         #adata=list(yearData[1])
@@ -54,6 +69,15 @@ def GetPhotoThumbnail(photoFileNames):
         timeHelper.stop()
 
 def MainProcessSengMsg():
+    """
+        Integrate all the processes.
+        1. Get care list.
+        2. GetManyYearPhotoDates
+        3. GetPhotosByPhotoDates
+        4. GetPhotoThumbnail
+        5. Use google map api to find address which the photo taken with the data from photo exif gps information
+        6. Use Line notify to remind you and enjoy it.
+    """
     memoryDate = datetime.today()
 
     duh = dbUsersHelper()

@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
 from datetime import datetime
 
+"""
+    This class uses to do all the datetime translate function.
+"""
+
 class DateTimeHelper():
     DATETIME_FORMAT = '%Y:%m:%d %H:%M:%S'
     def timestampToDateTime(self,timestamp):

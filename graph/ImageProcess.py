@@ -2,11 +2,18 @@
 import os
 from PIL import Image
 
+"""
+    class uses to process the image
+"""
+
 class ImageProcessHelper:    
     #pic type is string
     #tsize type is tuple (1024,1024)
     #tmpFolder type is string
     def thumbnail(self,pic,tsize,tmpFolder,newName):
+        """
+            create thumbnail in assigned folder.
+        """
         if not os.path.exists(tmpFolder):    
             os.makedirs(tmpFolder, exist_ok=True) 
 

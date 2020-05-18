@@ -7,6 +7,10 @@ from DateTimeHelper import DateTimeHelper
 from ExifHelper import ExifHelper
 from FileParser import ImageFileHelper
 
+"""
+    Update all the photo_utc_date field
+"""
+
 exifh=ExifHelper()
 dth=DateTimeHelper()
 tzh=TimeZoneHelper('Asia/Taipei')
