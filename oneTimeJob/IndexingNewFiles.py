@@ -25,10 +25,6 @@ def IndexingNewImageFile(forcedAll=False):
     exifh = ExifHelper()
     imgfh = ImageFileHelper()
 
-    #default monitor folder
-    #dirs = dbh.getMonitorDirs()
-    #if len(dirs)<=0:
-    #    dbh.insertDirIfNotExist((DefaultMonitorDir,True,None))
     dirs = dbh.getMonitorDirs()
 
     i = 0

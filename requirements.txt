@@ -1,5 +1,6 @@
 Pillow
 timezonefinder
+python-dateutil
 pytz
 urllib3
 certifi

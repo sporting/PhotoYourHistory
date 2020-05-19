@@ -7,6 +7,7 @@ from time import time
 class EvaluateTimeHelper:
     def start(self,tag):
         self.tag = tag
+        print(self.tag+': start')
         self.start_time = time()
     def stop(self):
         useTime = time()-self.start_time

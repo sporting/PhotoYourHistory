@@ -19,7 +19,7 @@ def autoInsertMonitorDir(rootdir):
     
     for folder in folders:
         print(folder)
-        dbh.insertDirIfNotExist((folder,False,None))    
+        dbh.insertDirIfNotExist((folder,False,False,None))    
 
 if __name__ == "__main__":
     if len(sys.argv[1:])>=1:

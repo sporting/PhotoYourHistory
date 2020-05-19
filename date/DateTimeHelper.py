@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from datetime import datetime
+from dateutil import parser
 
 """
     This class uses to do all the datetime translate function.
@@ -30,7 +31,7 @@ class DateTimeHelper():
 
     def strToDateTime(self,str):
         try:
-            return datetime.strptime(str,self.DATETIME_FORMAT)
+            return parser.parse(str)
         except Exception as e:
             print(e)
             return None

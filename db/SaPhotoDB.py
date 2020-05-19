@@ -55,6 +55,7 @@ class dbPhotoHelper:
             cur.execute('''CREATE TABLE IF NOT EXISTS PARSER_DIRECTORY
             (ID INTEGER PRIMARY KEY AUTOINCREMENT, 
             DIR             TEXT,
+            ROOT_DIR        INTEGER DEFAULT 0,            
             RECURSIVE       INTEGER DEFAULT 0,
             PARSER_UTC_DATE      DATETIME,
             MONITOR         INTEGER DEFAULT 1
@@ -104,10 +105,10 @@ class dbPhotoHelper:
         except Exception as e:
             print("photoExists:"+str(e))       
 
-    def updatePhoto(self,directory,filename,batchDT):
+    def updatePhoto(self,directory,filename,batchDT,sizeB):
         cur = self.conn.cursor()
         try:
-            cur.execute('''UPDATE PHOTOS SET BATCH_UTC_DATE=? WHERE DIR=? AND FILE_NAME=? ''',(batchDT,directory,filename))
+            cur.execute('''UPDATE PHOTOS SET BATCH_UTC_DATE=?, SIZE_B=? WHERE DIR=? AND FILE_NAME=? ''',(batchDT,sizeB,directory,filename))
             self.conn.commit()            
         except Exception as e:
             self.conn.rollback()
@@ -137,11 +138,29 @@ class dbPhotoHelper:
             r = cur.fetchone()
             if not r:
                 print('new dir = '+log[0])
-                cur.execute('''INSERT INTO PARSER_DIRECTORY (DIR, RECURSIVE, PARSER_UTC_DATE) VALUES (?,?,?);''',log)
+                cur.execute('''INSERT INTO PARSER_DIRECTORY (DIR, ROOT_DIR, RECURSIVE, PARSER_UTC_DATE,MONITOR) VALUES (?,?,?,?,1);''',log)
                 self.conn.commit()
         except Exception as e:
             self.conn.rollback()
             print("insertDirIfNotExist:"+str(e))
+
+    def clearDirs(self):
+        cur = self.conn.cursor()
+        try:
+            cur.execute('''update parser_directory set parser_utc_date=null''')
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("clearDirs:"+str(e))
+
+    def clearDir(self,log):
+        cur = self.conn.cursor()
+        try:
+            cur.execute('''update parser_directory set parser_utc_date=null where dir=?''',(log,))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("clearDir:"+str(e))
 
     def insertDirs(self,logs):
         #log = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
@@ -150,7 +169,7 @@ class dbPhotoHelper:
         #    ]
         cur = self.conn.cursor()
         try:
-            cur.executemany('''INSERT INTO PARSER_DIRECTORY (DIR, RECURSIVE, PARSER_UTC_DATE) VALUES (?,?,?);''',logs)
+            cur.executemany('''INSERT INTO PARSER_DIRECTORY (DIR, ROOT_DIR, RECURSIVE, PARSER_UTC_DATE) VALUES (?,?,?,?);''',logs)
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
@@ -169,6 +188,15 @@ class dbPhotoHelper:
             self.conn.rollback()
             print("updateDir:"+str(e))
 
+    def getRootDirs(self):        
+        try:
+            cur = self.conn.cursor()        
+            cur.execute('''SELECT * FROM PARSER_DIRECTORY WHERE ROOT_DIR=1''')
+            rows = cur.fetchall()
+
+            return rows
+        except Exception as e:
+            print("getRootDirs:"+str(e))
 
     def getMonitorDirs(self):        
         try:
@@ -179,6 +207,16 @@ class dbPhotoHelper:
             return rows
         except Exception as e:
             print("getMonitorDirs:"+str(e))
+
+    def getDir(self,dir):        
+        try:
+            cur = self.conn.cursor()        
+            cur.execute('''SELECT * FROM PARSER_DIRECTORY WHERE MONITOR=1 AND DIR=?''',(dir,))
+            rows = cur.fetchall()
+
+            return rows
+        except Exception as e:
+            print("getDir:"+str(e))
 
     def getMinPhotoUtcTS(self):
         try:

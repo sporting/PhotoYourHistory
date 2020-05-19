@@ -9,7 +9,7 @@ from db.SaPhotoDB import dbPhotoHelper
 def InsertMonitorDir(folders):   
     dbh = dbPhotoHelper()
     for folder in folders:
-        dbh.insertDirIfNotExist((folder,False,None))    
+        dbh.insertDirIfNotExist((folder,False,False,None))    
 
 if __name__ == "__main__":
     if len(sys.argv[1:])>=1:
