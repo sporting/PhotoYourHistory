@@ -7,6 +7,7 @@ from date.DateTimeHelper import DateTimeHelper
 from graph.ExifHelper import ExifHelper
 from synology.FileParser import ImageFileHelper
 
+from db.MyCatalogEncoder import MyCatalogEncoder
 """
     Parse all the photos from your monitor folders in database.
     Extract every photo information and exif, then store in database.
@@ -38,7 +39,7 @@ def DailyIndexingNewImageFile():
             dirTime = dth.timestampToDateTime(dirTimestamp)
             dirUtcTime = tzh.getUTCTime(dirTime)
             dirUtcTimestamp = dth.dateTimeToTimestamp(dirUtcTime)
-            lastParserUtcTimestamp = dth.dateTimeToTimestamp(dth.strToDateTime(lastParserUtc))
+            lastParserUtcTimestamp = dth.dateTimeToTimestamp(dth.strToDateTime2(lastParserUtc))
             #print('Compare(DIR_DT,PARSER_DT): ('+str(dirUtcTime)+','+str(lastParserUtc)+')')
             #print('CompareTS(DIR_DT,PARSER_DT): ('+str(dirUtcTimestamp)+','+str(lastParserUtcTimestamp)+')')
             if not (dirUtcTimestamp>= lastParserUtcTimestamp):
@@ -84,8 +85,9 @@ def DailyIndexingNewImageFile():
                     tz = tzh.getTimezone(gps)
 
                 size_b=os.stat(f).st_size
-                log = (fname,d['DIR'],dd,meta,ts,photoUtcDT,createDT,tz,gps,currentDT,'',ext,'','',size_b)
-                dbh.insertPhoto(log)
+                log = (fname,d['DIR'],dd,meta,ts,photoUtcDT,createDT,tz,gps,currentDT,'',ext,'',size_b)
+                dbh.insertPhoto(log,cls=MyCatalogEncoder)
+                #dbh.insertPhoto(log)
             else:
                 j = j + 1
                 size_b=os.stat(f).st_size

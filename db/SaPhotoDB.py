@@ -2,6 +2,7 @@
 import sqlite3
 import json
 from db.JsonEncoder import MyEncoder
+from db.CatalogEncoder import CatalogEncoder
 
 """ 
     Initial the sqlite3 database and create tables, indexes.
@@ -41,7 +42,8 @@ class dbPhotoHelper:
             FILE_TYPE      TEXT,
             SCENE          TEXT,
             CATALOG        TEXT,
-            SIZE_B         INTEGER
+            SIZE_B         INTEGER,
+            GPS_ADDRESS    TEXT
             );''')
 
             cur.execute('''CREATE INDEX IF NOT EXISTS PHOTOS_TS_IDX ON PHOTOS ( PHOTO_UTC_TS );''')
@@ -68,11 +70,48 @@ class dbPhotoHelper:
             KEY             TEXT,
             VALUE           TEXT,
             DESC            TEXT
-            );''')            
+            );''')       
+
+            cur.execute('''CREATE TABLE IF NOT EXISTS VIDEOS
+            (ID  INTEGER PRIMARY KEY AUTOINCREMENT,
+            FILE_NAME      TEXT    NOT NULL,
+            ROOT_DIR       TEXT    NOT NULL,
+            DIR            TEXT    NOT NULL,
+            CREATE_UTC_DATE DATETIME,
+            TIME_ZONE      TEXT,
+            BATCH_UTC_DATE DATETIME,
+            FILE_TYPE      TEXT,
+            CATALOG        TEXT,
+            SIZE_B         INTEGER
+            );''')
+
+            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_CDATE_IDX ON PHOTOS ( CREATE_UTC_DATE );''')
+            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_ROOT_DIR_IDX ON PHOTOS ( ROOT_DIR );''')
+            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_CATALOG_IDX ON PHOTOS ( CATALOG );''')
+            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_DIR_FILE_IDX ON PHOTOS ( FILE_NAME,DIR );''')
+
         except Exception as e:
             print(e)
 
-    def insertPhoto(self,meta):
+    def UpdateGeoAddress(self,fileName,dirName,address):
+        cur = self.conn.cursor()
+        try:
+            cur.execute('''UPDATE PHOTOS SET GPS_ADDRESS=? WHERE FILE_NAME=? AND DIR=?;''',(address,fileName,dirName))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("UpdateGeoAddress:"+str(e))   
+
+    def insertVideo(self,meta):
+        cur = self.conn.cursor()
+        try:
+            cur.execute('''INSERT INTO VIDEOS (FILE_NAME,ROOT_DIR,DIR,CREATE_UTC_DATE,TIME_ZONE,BATCH_UTC_DATE,FILE_TYPE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3],meta[4],meta[5],meta[6],meta[7],meta[8]))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("insertVideo:"+str(e))
+
+    def insertPhoto(self,meta,cls=CatalogEncoder):
         #log = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
         #     ('2006-04-05', 'BUY', 'MSFT', 1000, 72.00),
         #     ('2006-04-06', 'SELL', 'IBM', 500, 53.00),
@@ -80,7 +119,8 @@ class dbPhotoHelper:
         cur = self.conn.cursor()
         try:
             m3 = json.dumps(meta[3],cls=MyEncoder,indent=4)
-            cur.execute('''INSERT INTO PHOTOS (FILE_NAME,ROOT_DIR,DIR,META,PHOTO_UTC_TS,PHOTO_UTC_DATE,CREATE_UTC_DATE,TIME_ZONE,GPS,BATCH_UTC_DATE,FACE_RECOGNITION,FILE_TYPE,SCENE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],m3,meta[4],meta[5],meta[6],meta[7],meta[8],meta[9],meta[10],meta[11],meta[12],meta[13],meta[14]))
+            catalog = cls().default(meta[2])
+            cur.execute('''INSERT INTO PHOTOS (FILE_NAME,ROOT_DIR,DIR,META,PHOTO_UTC_TS,PHOTO_UTC_DATE,CREATE_UTC_DATE,TIME_ZONE,GPS,BATCH_UTC_DATE,FACE_RECOGNITION,FILE_TYPE,SCENE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],m3,meta[4],meta[5],meta[6],meta[7],meta[8],meta[9],meta[10],meta[11],meta[12],catalog,meta[13]))
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
@@ -114,14 +154,14 @@ class dbPhotoHelper:
             self.conn.rollback()
             print("updatePhoto:"+str(e)) 
 
-    def insertPhotoIfNotExist(self,meta):
+    def insertPhotoIfNotExist(self,meta,cls=CatalogEncoder):
         cur = self.conn.cursor()
         try:
-            m3 = json.dumps(meta[3],cls=MyEncoder,indent=4)
-            cur.execute('''SELECT * FROM PHOTOS WHERE FILE_NAME=? AND DIR=? AND META=?''',(meta[0],meta[1],m3))
+            cur.execute('''SELECT * FROM PHOTOS WHERE FILE_NAME=? AND DIR=?''',(meta[0],meta[1]))
             r = cur.fetchone()
             if not r:
-                cur.execute('''INSERT INTO PHOTOS (FILE_NAME,ROOT_DIR,DIR,META,PHOTO_UTC_TS,PHOTO_UTC_DATE,CREATE_UTC_DATE,TIME_ZONE,GPS,BATCH_UTC_DATE,FACE_RECOGNITION,FILE_TYPE,SCENE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],m3,meta[4],meta[5],meta[6],meta[7],meta[8],meta[9],meta[10],meta[11],meta[12],meta[13],meta[14]))
+                catalog = cls().default(meta[2])
+                cur.execute('''INSERT INTO PHOTOS (FILE_NAME,ROOT_DIR,DIR,META,PHOTO_UTC_TS,PHOTO_UTC_DATE,CREATE_UTC_DATE,TIME_ZONE,GPS,BATCH_UTC_DATE,FACE_RECOGNITION,FILE_TYPE,SCENE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],m3,meta[4],meta[5],meta[6],meta[7],meta[8],meta[9],meta[10],meta[11],meta[12],catalog,meta[13]))
                 self.conn.commit()
         except Exception as e:
             self.conn.rollback()
@@ -259,7 +299,8 @@ class dbPhotoHelper:
 
     def getRandomThisDayByCatalog(self,utcTimestampStart,utcTimestampEnd,num,catalogs):
         try:
-            s = 'CATALOG==""'
+            #s = 'CATALOG=""'
+            s = '1=1' #default new image can't push to anyone
             for cata in catalogs:
                 s = s + ' OR CATALOG LIKE ("%'+cata+'%")'
 

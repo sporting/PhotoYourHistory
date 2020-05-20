@@ -55,7 +55,7 @@ def GetPhotosByPhotoDates(photoDates,catalogs):
         ymdtsEnd = dth.dateTimeToTimestamp(tzh.getUTCTime(dt+ timedelta(days=1)))
         dataRows = dbh.getRandomThisDayByCatalog(ymdtsStart,ymdtsEnd,2,catalogs)
         timeHelper.stop()
-        yield (dt,map(lambda row: {'DIR':row['DIR'],'FILE_NAME':row['FILE_NAME'],'GPS':row['GPS']},dataRows))
+        yield (dt,map(lambda row: {'DIR':row['DIR'],'FILE_NAME':row['FILE_NAME'],'GPS':row['GPS'],'GPS_ADDRESS':row['GPS_ADDRESS']},dataRows))
 
 def GetPhotoThumbnail(photoFileNames):
     """
@@ -65,7 +65,7 @@ def GetPhotoThumbnail(photoFileNames):
     for yearData in photoFileNames:
         #adata=list(yearData[1])
         timeHelper.start('GetPhotoThumbnail')  
-        yield (yearData[0],map(lambda data:{'DIR':data['DIR'],'FILE_NAME':data['FILE_NAME'],'GPS':data['GPS'],'THUMBNAIL': thumbnailGetter.thumbnail(os.path.join(data['DIR'],data['FILE_NAME'])) },yearData[1]))  
+        yield (yearData[0],map(lambda data:{'DIR':data['DIR'],'FILE_NAME':data['FILE_NAME'],'GPS':data['GPS'],'GPS_ADDRESS':data['GPS_ADDRESS'],'THUMBNAIL': thumbnailGetter.thumbnail(os.path.join(data['DIR'],data['FILE_NAME'])) },yearData[1]))  
         timeHelper.stop()
 
 def MainProcessSengMsg():
@@ -80,6 +80,7 @@ def MainProcessSengMsg():
     """
     memoryDate = datetime.today()
 
+    dbh = dbPhotoHelper()
     duh = dbUsersHelper()
     users = duh.getSMSUsers()
     noticeUsers = map(lambda user: (user,duh.getUserNotice(user['USER_ID'])),users)
@@ -107,11 +108,15 @@ def MainProcessSengMsg():
                     picURI = obj['THUMBNAIL']
                     basename = os.path.basename(obj['DIR'])
                     msg = msg+"\n"+basename
+                    gps_address = obj['GPS_ADDRESS']
                     gps = obj['GPS']
-                    if gps:
+                    if gps_address:
+                        msg = msg+ "\n"+gps_address
+                    elif gps:                        
                         address =geoh.getNearAddress(gps)
                         if address:
                             msg = msg+ "\n"+address
+                            dbh.UpdateGeoAddress(obj['FILE_NAME'],obj['DIR'],address)
                     print(picURI)
                     line.send(str(msg),picURI)
 

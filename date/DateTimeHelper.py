@@ -31,11 +31,17 @@ class DateTimeHelper():
 
     def strToDateTime(self,str):
         try:
+            return datetime.strptime(str, self.DATETIME_FORMAT)
+            #return parser.parse(str)
+        except Exception as e:
+            print(e)
+            return None
+    def strToDateTime2(self,str):
+        try:
             return parser.parse(str)
         except Exception as e:
             print(e)
             return None
-
     def getYear(self,dt):
         try:
             return dt.year
