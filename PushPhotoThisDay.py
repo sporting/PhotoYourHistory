@@ -3,7 +3,7 @@ from datetime import datetime
 from db.SaUsersDB import dbUsersHelper
 import mysys.PushPhoto as PhotoService
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     duh = dbUsersHelper()
     users = duh.getSMSUsers()    
     for user in users:

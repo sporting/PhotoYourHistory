@@ -47,6 +47,15 @@ class dbUsersHelper:
             NOTICE_USER_ID TEXT    NOT NULL
             );''')
 
+            cur.execute('''CREATE TABLE IF NOT EXISTS SYSPARAM
+            (ID INTEGER PRIMARY KEY AUTOINCREMENT, 
+            KEY             TEXT,
+            VALUE           TEXT,
+            DESC            TEXT
+            );''')      
+
+            cur.execute('''CREATE INDEX IF NOT EXISTS SYSPARAM_KEY_IDX ON SYSPARAM ( KEY );''')
+
         except Exception as e:
             print(e)
 
@@ -124,7 +133,17 @@ class dbUsersHelper:
             return one['value']
         except Exception as e:
             self.conn.rollback()
-            print("getGoogleAPIKey:"+str(e))                 
+            print("getGoogleAPIKey:"+str(e))    
+
+    def getQuickConnectID(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute(''' SELECT value from SYSPARAM where key='QUICKCONNECT_ID' ''')
+            one = cur.fetchone()
+            return one['value']
+        except Exception as e:
+            self.conn.rollback()
+            print("getQuickConnectID:"+str(e))                         
 
 if __name__ == "__main__":
     helper = dbUsersHelper()

@@ -13,7 +13,7 @@ class DateTimeHelper():
             return datetime.fromtimestamp(timestamp)
         except Exception as e:
             print(e)
-            return None            
+            return None                        
 
     def dateTimeToTimestamp(self,dt):
         try:

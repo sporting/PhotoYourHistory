@@ -65,13 +65,6 @@ class dbPhotoHelper:
 
             cur.execute('''CREATE INDEX IF NOT EXISTS PHOTOS_DATE_IDX ON PARSER_DIRECTORY ( DIR,PARSER_UTC_DATE );''')
 
-            cur.execute('''CREATE TABLE IF NOT EXISTS SYSPARAM
-            (ID INTEGER PRIMARY KEY AUTOINCREMENT, 
-            KEY             TEXT,
-            VALUE           TEXT,
-            DESC            TEXT
-            );''')       
-
             cur.execute('''CREATE TABLE IF NOT EXISTS VIDEOS
             (ID  INTEGER PRIMARY KEY AUTOINCREMENT,
             FILE_NAME      TEXT    NOT NULL,
@@ -102,26 +95,54 @@ class dbPhotoHelper:
             self.conn.rollback()
             print("UpdateGeoAddress:"+str(e))   
 
-    def insertVideo(self,meta):
+    def insertVideo(self,meta,cls=CatalogEncoder):
         cur = self.conn.cursor()
         try:
-            cur.execute('''INSERT INTO VIDEOS (FILE_NAME,ROOT_DIR,DIR,CREATE_UTC_DATE,TIME_ZONE,BATCH_UTC_DATE,FILE_TYPE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3],meta[4],meta[5],meta[6],meta[7],meta[8]))
+            catalog = cls().default(meta[2])
+            cur.execute('''INSERT INTO VIDEOS (FILE_NAME,ROOT_DIR,DIR,CREATE_UTC_DATE,TIME_ZONE,BATCH_UTC_DATE,FILE_TYPE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3],meta[4],meta[5],meta[6],catalog,meta[7]))
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
             print("insertVideo:"+str(e))
 
-    def insertVideoIfNotExist(self,meta):
+    def insertVideoIfNotExist(self,meta,cls=CatalogEncoder):
         cur = self.conn.cursor()
         try:
+            catalog = cls().default(meta[2])
             cur.execute('''SELECT * FROM VIDEOS WHERE FILE_NAME=? AND DIR=?''',(meta[0],meta[2]))
             r = cur.fetchone()
             if not r:
-                cur.execute('''INSERT INTO VIDEOS (FILE_NAME,ROOT_DIR,DIR,CREATE_UTC_DATE,TIME_ZONE,BATCH_UTC_DATE,FILE_TYPE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3],meta[4],meta[5],meta[6],meta[7],meta[8]))
+                cur.execute('''INSERT INTO VIDEOS (FILE_NAME,ROOT_DIR,DIR,CREATE_UTC_DATE,TIME_ZONE,BATCH_UTC_DATE,FILE_TYPE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3],meta[4],meta[5],meta[6],catalog,meta[7]))
                 self.conn.commit()
         except Exception as e:
             self.conn.rollback()
             print("insertVideoIfNotExist:"+str(e))
+
+    def updateVideo(self,directory,filename,batchDT):
+        cur = self.conn.cursor()
+        try:
+            cur.execute('''UPDATE VIDEOS SET BATCH_UTC_DATE=? WHERE DIR=? AND FILE_NAME=? ''',(batchDT,directory,filename))
+            self.conn.commit()            
+        except Exception as e:
+            self.conn.rollback()
+            print("updateVideo:"+str(e)) 
+    def videoExists(self,directory,filename):
+        cur = self.conn.cursor()
+        try:
+            cur.execute('''SELECT * FROM VIDEOS WHERE DIR=? AND FILE_NAME=? ''',(directory,filename))
+            r = cur.fetchone()
+            return True if r else False
+            
+        except Exception as e:
+            print("photoExists:"+str(e))   
+    def obseleteVideo(self,rootDir,batchDT):
+        cur = self.conn.cursor()
+        try:
+            cur.execute('''DELETE FROM VIDEOS WHERE ROOT_DIR=? AND BATCH_UTC_DATE<>?''',(rootDir,batchDT))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("obseleteVideo:"+str(e))
 
     def insertPhoto(self,meta,cls=CatalogEncoder):
         #log = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
@@ -157,10 +178,10 @@ class dbPhotoHelper:
         except Exception as e:
             print("photoExists:"+str(e))       
 
-    def updatePhoto(self,directory,filename,batchDT,sizeB):
+    def updatePhoto(self,directory,filename,batchDT):
         cur = self.conn.cursor()
         try:
-            cur.execute('''UPDATE PHOTOS SET BATCH_UTC_DATE=?, SIZE_B=? WHERE DIR=? AND FILE_NAME=? ''',(batchDT,sizeB,directory,filename))
+            cur.execute('''UPDATE PHOTOS SET BATCH_UTC_DATE=? WHERE DIR=? AND FILE_NAME=? ''',(batchDT,directory,filename))
             self.conn.commit()            
         except Exception as e:
             self.conn.rollback()
@@ -340,6 +361,28 @@ class dbPhotoHelper:
             return rows
         except Exception as e:
             print("getRandomThisDayByCatalog:"+str(e)) 
+
+    def getRandomVideoThisDayByCatalog(self,utcDTStart,utcDTEnd,num,catalogs):
+        try:
+            #s = 'CATALOG=""'
+            s = '1=0' #default new image can't push to anyone
+            for cata in catalogs:
+                s = s + ' OR CATALOG LIKE ("%'+cata+'%")'
+
+            s = '('+s+')'
+
+            #print('getRandomThisDayByCatalog:'+str(s))
+            cur = self.conn.cursor()
+            cur.execute('SELECT a.* from VIDEOS a '+
+                        'where CREATE_UTC_DATE >=?  and CREATE_UTC_DATE<=? '+
+                        ' AND '+ s +
+                        'ORDER BY RANDOM() LIMIT ?'
+                        ,(utcDTStart,utcDTEnd,num))
+            rows = cur.fetchall()
+
+            return rows
+        except Exception as e:
+            print("getRandomVideoThisDayByCatalog:"+str(e)) 
 
     def getPhoto(self,dir,fileName):
         try:

@@ -22,6 +22,8 @@ class DirectoryHelper:
 #ctime create date
 #atime access date
 class ImageFileHelper:
+    #windows is case insensitive, windows will run twice *.jpg&*.JPG
+    #Linux is case sensitive
     EXTENSIONS = ['*.jpg', '*.jpeg', '*.png','*.JPG','*.JPEG','*.PNG'] 
     def getFiles(self,path,localtimestamp=None,recursive=False):
         """

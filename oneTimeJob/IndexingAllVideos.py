@@ -5,6 +5,7 @@ from db.SaPhotoDB import dbPhotoHelper
 from date.TimeZoneHelper import TimeZoneHelper
 from date.DateTimeHelper import DateTimeHelper
 from synology.FileParser import VideoFileHelper
+from db.MyCatalogEncoder import MyCatalogEncoder
 
 """
     Parse all the photos from your monitor folders in database.
@@ -42,8 +43,8 @@ def IndexingAllVideos():
             createDT = tzh.getUTCTime(cLocalDT)
             tz = DefaultTimeZone            
             size_b=os.stat(f).st_size
-            log = (fname,d['DIR'],dd,createDT,tz,currentDT,ext,'',size_b)
-            dbh.insertVideoIfNotExist(log)
+            log = (fname,d['DIR'],dd,createDT,tz,currentDT,ext,size_b)
+            dbh.insertVideoIfNotExist(log,cls=MyCatalogEncoder)
 
 if __name__ == "__main__":
     IndexingAllVideos()
