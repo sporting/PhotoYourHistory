@@ -96,6 +96,16 @@ class dbUsersHelper:
             self.conn.rollback()
             print("getSMSUsers:"+str(e))     
 
+    def getSMSUser(self,userId):      
+        try:
+            cur = self.conn.cursor()
+            cur.execute('''SELECT USER_ID,SMS_TYPE,SMS_ID,NAME FROM USERS WHERE SMS_ID <>'' AND USER_ID=? ;''',(userId,))
+            rows = cur.fetchall()
+            return rows
+        except Exception as e:
+            self.conn.rollback()
+            print("getSMSUser:"+str(e))   
+
     def getUserNotice(self,userId):        
         try:
             cur = self.conn.cursor()

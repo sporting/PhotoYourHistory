@@ -85,10 +85,10 @@ class dbPhotoHelper:
             SIZE_B         INTEGER
             );''')
 
-            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_CDATE_IDX ON PHOTOS ( CREATE_UTC_DATE );''')
-            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_ROOT_DIR_IDX ON PHOTOS ( ROOT_DIR );''')
-            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_CATALOG_IDX ON PHOTOS ( CATALOG );''')
-            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_DIR_FILE_IDX ON PHOTOS ( FILE_NAME,DIR );''')
+            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_CDATE_IDX ON VIDEOS ( CREATE_UTC_DATE );''')
+            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_ROOT_DIR_IDX ON VIDEOS ( ROOT_DIR );''')
+            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_CATALOG_IDX ON VIDEOS ( CATALOG );''')
+            cur.execute('''CREATE INDEX IF NOT EXISTS VIDEOS_DIR_FILE_IDX ON VIDEOS ( FILE_NAME,DIR );''')
 
         except Exception as e:
             print(e)
@@ -110,6 +110,18 @@ class dbPhotoHelper:
         except Exception as e:
             self.conn.rollback()
             print("insertVideo:"+str(e))
+
+    def insertVideoIfNotExist(self,meta):
+        cur = self.conn.cursor()
+        try:
+            cur.execute('''SELECT * FROM VIDEOS WHERE FILE_NAME=? AND DIR=?''',(meta[0],meta[2]))
+            r = cur.fetchone()
+            if not r:
+                cur.execute('''INSERT INTO VIDEOS (FILE_NAME,ROOT_DIR,DIR,CREATE_UTC_DATE,TIME_ZONE,BATCH_UTC_DATE,FILE_TYPE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3],meta[4],meta[5],meta[6],meta[7],meta[8]))
+                self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("insertVideoIfNotExist:"+str(e))
 
     def insertPhoto(self,meta,cls=CatalogEncoder):
         #log = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
@@ -157,7 +169,7 @@ class dbPhotoHelper:
     def insertPhotoIfNotExist(self,meta,cls=CatalogEncoder):
         cur = self.conn.cursor()
         try:
-            cur.execute('''SELECT * FROM PHOTOS WHERE FILE_NAME=? AND DIR=?''',(meta[0],meta[1]))
+            cur.execute('''SELECT * FROM PHOTOS WHERE FILE_NAME=? AND DIR=?''',(meta[0],meta[2]))
             r = cur.fetchone()
             if not r:
                 catalog = cls().default(meta[2])
@@ -268,9 +280,19 @@ class dbPhotoHelper:
         except Exception as e:
             print("getMinPhotoUtcTS"+str(e))
 
+    def getMinPhotoUtcTS(self):
+        try:           
+            cur = self.conn.cursor()
+            cur.execute('SELECT min(photo_utc_ts) min_photo_utc_ts from PHOTOS a WHERE PHOTO_UTC_TS IS NOT NULL')
+            one = cur.fetchone()
+            if one:
+                return one['min_photo_utc_ts']            
+        except Exception as e:
+            print("getMinPhotoUtcTS"+str(e))
+
     def getMinPhotoUtcTSByCatalog(self,catalogs):
         try:
-            s = 'CATALOG==""'
+            s = ' 1=0 '
             for cata in catalogs:
                 s = s + ' OR CATALOG LIKE ("%'+cata+'%")'
 
@@ -300,13 +322,13 @@ class dbPhotoHelper:
     def getRandomThisDayByCatalog(self,utcTimestampStart,utcTimestampEnd,num,catalogs):
         try:
             #s = 'CATALOG=""'
-            s = '1=1' #default new image can't push to anyone
+            s = '1=0' #default new image can't push to anyone
             for cata in catalogs:
                 s = s + ' OR CATALOG LIKE ("%'+cata+'%")'
 
             s = '('+s+')'
 
-
+            #print('getRandomThisDayByCatalog:'+str(s))
             cur = self.conn.cursor()
             cur.execute('SELECT a.* from PHOTOS a '+
                         'where PHOTO_UTC_TS >=?  and PHOTO_UTC_TS<=? '+
@@ -319,6 +341,15 @@ class dbPhotoHelper:
         except Exception as e:
             print("getRandomThisDayByCatalog:"+str(e)) 
 
+    def getPhoto(self,dir,fileName):
+        try:
+            cur = self.conn.cursor()
+            cur.execute('SELECT a.* from PHOTOS a where DIR=? AND FILE_NAME=? ',(dir,fileName))
+            rows = cur.fetchall()
+
+            return rows
+        except Exception as e:
+            print("getPhoto:"+str(e)) 
 if __name__ == "__main__":
     helper = dbHelper()
     helper.create()

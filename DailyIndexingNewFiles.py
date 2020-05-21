@@ -35,6 +35,9 @@ def DailyIndexingNewImageFile():
         recursiveFalg = d['RECURSIVE'] == True
         lastParserLocalTimestamp=None
         if lastParserUtc:
+            if not os.path.exists(d['DIR']):
+                print(str(d['DIR'])+' folder is not exists')
+                continue            
             dirTimestamp =  os.path.getmtime(d['DIR'])
             dirTime = dth.timestampToDateTime(dirTimestamp)
             dirUtcTime = tzh.getUTCTime(dirTime)
