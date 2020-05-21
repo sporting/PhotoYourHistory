@@ -43,7 +43,7 @@ def IndexingAllVideos():
             tz = DefaultTimeZone            
             size_b=os.stat(f).st_size
             log = (fname,d['DIR'],dd,createDT,tz,currentDT,ext,'',size_b)
-            dbh.insertVideo(log)
+            dbh.insertVideoIfNotExist(log)
 
 if __name__ == "__main__":
     IndexingAllVideos()
