@@ -91,7 +91,7 @@ def GetPhotosThumbnail(photoFileNames):
     thumbnailGetter = ImageThumbnailGetter()
     for yearData in photoFileNames:
         #adata=list(yearData[1])
-        #timeHelper.start('GetPhotoThumbnail')  
+        #timeHelper.start('GetPhotoThumbnail')          
         yield (yearData[0],map(lambda data:{'DIR':data['DIR'],'FILE_NAME':data['FILE_NAME'],'GPS':data['GPS'],'GPS_ADDRESS':data['GPS_ADDRESS'],'THUMBNAIL': thumbnailGetter.thumbnail(os.path.join(data['DIR'],data['FILE_NAME'])) },yearData[1]))  
         #timeHelper.stop()
 
@@ -106,6 +106,7 @@ def CreateVideoMessage(oriYear,obj):
     qid = duh.getQuickConnectID()
     if qid:
         url = SynoWebApiFormatter.VideoPlayerLaunch(qid,os.path.join(obj['DIR'],obj['FILE_NAME']))
+        print(url)
         msg = msg+"\n"+url
 
     return msg
@@ -158,9 +159,11 @@ def Push(userId,memoryDate,randomPhotoNumbers):
         catalogs = list(map(lambda data: data['NOTICE_USER_ID'], noticeUser[1]))
         user = noticeUser[0]
 
+        photoFileNames=[]
+        photoThumbnails=[]
         #photoDates = GetManyYearPhotoDates(memoryDate,catalogs)
-        photoFileNames = (GetPhotosByPhotoDates(photoDates,catalogs,randomPhotoNumbers))
-        photoThumbnails = (GetPhotosThumbnail(photoFileNames))
+        #photoFileNames = (GetPhotosByPhotoDates(photoDates,catalogs,randomPhotoNumbers))
+        #photoThumbnails = (GetPhotosThumbnail(photoFileNames))
 
         videoFileNames = GetVideosByVideoDates(photoDates,catalogs,randomPhotoNumbers)
         videoThumbnails = (GetVideosThumbnail(videoFileNames))
@@ -175,15 +178,17 @@ def Push(userId,memoryDate,randomPhotoNumbers):
                     photoMsg = CreatePhotoMessage(data[0].year,obj)
                     picURI = obj['THUMBNAIL']
                     if picURI:
+                        print(picURI)
                         statusCode = line.send(str(photoMsg),picURI)
-                        print(statusCode)
+                        #print(statusCode)
             for data in videoThumbnails:
                 for obj in data[1]:
                     videoMsg = CreateVideoMessage(data[0].year,obj)
                     picURI = obj['THUMBNAIL']
                     if picURI:
+                        print(picURI)
                         statusCode = line.send(str(videoMsg),picURI)
-                        print(statusCode)                    
+                        #print(statusCode)                    
 
 if __name__ == "__main__":
     MainProcessSengMsg()
