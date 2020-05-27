@@ -9,15 +9,14 @@ from urllib import parse
 ssl._create_default_https_context = ssl._create_unverified_context
 
 class VideoPlayerHelper:
-    loginUrl = '''https://{SYNOLOGY_HOST_IP}}:{SYNOLOGY_HOST_PORT}/webapi/auth.cgi?api=SYNO.API.Auth&version=6&method=login&account={account}&passwd={password}&session=FileStation&format=cookie'''
-    url = '''https://{SYNOLOGY_HOST_IP}}:{SYNOLOGY_HOST_PORT}/fbdownload/{fileName}?dlink="{dLink}"&_sid="{SID}"&mode=open'''
+    loginUrl = '''https://{SYNOLOGY_HOST_IP}:{SYNOLOGY_HOST_PORT}/webapi/auth.cgi?api=SYNO.API.Auth&version=6&method=login&account={account}&passwd={password}&session=FileStation&format=cookie'''
+    url = '''https://{SYNOLOGY_HOST_IP}:{SYNOLOGY_HOST_PORT}/fbdownload/{fileName}?dlink="{dLink}"&_sid="{SID}"&mode=open'''
 
     def __init__(self,hostIP,hostPort,account,password):
         self.hostIP = hostIP
         self.hostPort = hostPort
         self.account = account
         self.password = password
-
         self.SID = self.loginSynology()
 
     def utfencode(self,s):
@@ -51,15 +50,15 @@ class VideoPlayerHelper:
         url = url.replace('{account}',self.account)
         url = url.replace('{password}',self.password)
         try:
-            print(url)
             js = urllib.request.urlopen(url).read() 
+            js = js.decode('utf-8')
             jsObj = json.loads(js)
             if jsObj['success']==True:
                 return jsObj['data']['sid']
         except Exception as e:
             print(e)
 
-    def getVideoViewUrl(self,dir,fileName):
+    def getVideoViewUrl(self,dir,fileName,shortenFalg=True):
         if not self.SID:
             return None
             
@@ -75,7 +74,7 @@ class VideoPlayerHelper:
         url = url.replace('{dLink}',dLink)
         url = url.replace('{SID}',self.SID)
 
-        return url
+        return self.CreateShortUrl(url) if shortenFalg else url
 
     def CreateShortUrl(self,url):
         apiurl = "http://tinyurl.com/api-create.php?url="

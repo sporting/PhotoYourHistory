@@ -91,8 +91,10 @@ class dbPhotoHelper:
         try:
             cur.execute('''UPDATE PHOTOS SET GPS_ADDRESS=? WHERE FILE_NAME=? AND DIR=?;''',(address,fileName,dirName))
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("UpdateGeoAddress:"+str(e))   
 
     def insertVideo(self,meta,cls=CatalogEncoder):
@@ -101,8 +103,10 @@ class dbPhotoHelper:
             catalog = cls().default(meta[2])
             cur.execute('''INSERT INTO VIDEOS (FILE_NAME,ROOT_DIR,DIR,CREATE_UTC_DATE,TIME_ZONE,BATCH_UTC_DATE,FILE_TYPE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3],meta[4],meta[5],meta[6],catalog,meta[7]))
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("insertVideo:"+str(e))
 
     def insertVideoIfNotExist(self,meta,cls=CatalogEncoder):
@@ -114,8 +118,10 @@ class dbPhotoHelper:
             if not r:
                 cur.execute('''INSERT INTO VIDEOS (FILE_NAME,ROOT_DIR,DIR,CREATE_UTC_DATE,TIME_ZONE,BATCH_UTC_DATE,FILE_TYPE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3],meta[4],meta[5],meta[6],catalog,meta[7]))
                 self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("insertVideoIfNotExist:"+str(e))
 
     def updateVideo(self,directory,filename,batchDT):
@@ -123,8 +129,10 @@ class dbPhotoHelper:
         try:
             cur.execute('''UPDATE VIDEOS SET BATCH_UTC_DATE=? WHERE DIR=? AND FILE_NAME=? ''',(batchDT,directory,filename))
             self.conn.commit()            
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("updateVideo:"+str(e)) 
     def videoExists(self,directory,filename):
         cur = self.conn.cursor()
@@ -142,8 +150,10 @@ class dbPhotoHelper:
             cur.execute('''DELETE FROM VIDEOS WHERE ROOT_DIR=? AND BATCH_UTC_DATE<>?''',(rootDir,batchDT))
             print('obseleteVideo: '+str(cur.rowcount))
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("obseleteVideo:"+str(e))
 
     def insertPhoto(self,meta,cls=CatalogEncoder):
@@ -157,8 +167,10 @@ class dbPhotoHelper:
             catalog = cls().default(meta[2])
             cur.execute('''INSERT INTO PHOTOS (FILE_NAME,ROOT_DIR,DIR,META,PHOTO_UTC_TS,PHOTO_UTC_DATE,CREATE_UTC_DATE,TIME_ZONE,GPS,BATCH_UTC_DATE,FACE_RECOGNITION,FILE_TYPE,SCENE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],m3,meta[4],meta[5],meta[6],meta[7],meta[8],meta[9],meta[10],meta[11],meta[12],catalog,meta[13]))
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("insertPhoto:"+str(e))
 
     def obseletePhoto(self,rootDir,batchDT):
@@ -167,8 +179,10 @@ class dbPhotoHelper:
             cur.execute('''DELETE FROM PHOTOS WHERE ROOT_DIR=? AND BATCH_UTC_DATE<>?''',(rootDir,batchDT))
             print('obseletePhoto: '+str(cur.rowcount))
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False
             print("obseletePhoto:"+str(e))        
 
     def photoExists(self,directory,filename):
@@ -185,9 +199,11 @@ class dbPhotoHelper:
         cur = self.conn.cursor()
         try:
             cur.execute('''UPDATE PHOTOS SET BATCH_UTC_DATE=? WHERE DIR=? AND FILE_NAME=? ''',(batchDT,directory,filename))
-            self.conn.commit()            
+            self.conn.commit()      
+            return True      
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("updatePhoto:"+str(e)) 
 
     def insertPhotoIfNotExist(self,meta,cls=CatalogEncoder):
@@ -199,8 +215,10 @@ class dbPhotoHelper:
                 catalog = cls().default(meta[2])
                 cur.execute('''INSERT INTO PHOTOS (FILE_NAME,ROOT_DIR,DIR,META,PHOTO_UTC_TS,PHOTO_UTC_DATE,CREATE_UTC_DATE,TIME_ZONE,GPS,BATCH_UTC_DATE,FACE_RECOGNITION,FILE_TYPE,SCENE,CATALOG,SIZE_B) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);''',(meta[0],meta[1],meta[2],m3,meta[4],meta[5],meta[6],meta[7],meta[8],meta[9],meta[10],meta[11],meta[12],catalog,meta[13]))
                 self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False
             print("insertPhotoIfNotExist:"+str(e))
 
     def insertDirIfNotExist(self,log):
@@ -216,8 +234,10 @@ class dbPhotoHelper:
                 print('new dir = '+log[0])
                 cur.execute('''INSERT INTO PARSER_DIRECTORY (DIR, ROOT_DIR, RECURSIVE, PARSER_UTC_DATE,MONITOR) VALUES (?,?,?,?,1);''',log)
                 self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("insertDirIfNotExist:"+str(e))
 
     def clearDirs(self):
@@ -225,8 +245,10 @@ class dbPhotoHelper:
         try:
             cur.execute('''update parser_directory set parser_utc_date=null''')
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("clearDirs:"+str(e))
 
     def clearDir(self,log):
@@ -234,8 +256,10 @@ class dbPhotoHelper:
         try:
             cur.execute('''update parser_directory set parser_utc_date=null where dir=?''',(log,))
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("clearDir:"+str(e))
 
     def insertDirs(self,logs):
@@ -247,8 +271,10 @@ class dbPhotoHelper:
         try:
             cur.executemany('''INSERT INTO PARSER_DIRECTORY (DIR, ROOT_DIR, RECURSIVE, PARSER_UTC_DATE) VALUES (?,?,?,?);''',logs)
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("insertDirs:"+str(e))
 
     def updateDir(self,utcDate,directory):
@@ -260,8 +286,10 @@ class dbPhotoHelper:
         try:
             cur.execute('''UPDATE PARSER_DIRECTORY SET PARSER_UTC_DATE=? WHERE DIR=?;''',(utcDate,directory))
             self.conn.commit()
+            return True
         except Exception as e:
             self.conn.rollback()
+            return False            
             print("updateDir:"+str(e))
 
     def getRootDirs(self):        

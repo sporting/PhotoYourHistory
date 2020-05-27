@@ -26,3 +26,6 @@ synology/__pycache__/ImageGetter.cpython-37.pyc
 db/MyCatalogEncoder.py
 oneTimeJob/testpush.py
 db/MyVideoCatalogEncoder.py
+synology/WebApiUrlFormatter.py
+init/SetCryptKey.py
+mysys/CryptHelper.py

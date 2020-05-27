@@ -10,7 +10,7 @@ from synology.ImageGetter import ImageThumbnailGetter
 from im.LineNotify import LineNotify
 from google.geoapi import GeoHelper
 from mysys.EvaluateTime import EvaluateTimeHelper
-import synology.WebApiUrlFormatter as SynoWebApiFormatter
+from synology.VideoPlayerHelper import VideoPlayerHelper
 
 """
     Search photos in this date on the past several years
@@ -97,17 +97,20 @@ def GetPhotosThumbnail(photoFileNames):
 
 def CreateVideoMessage(oriYear,obj):
     duh = dbUsersHelper()
+    ip,port = duh.getNasHostIPPort()
+    account,pwd = duh.getNasLoginAccountPwd()
 
     by =datetime.now().year-oriYear
-    msg = "\n"+str(by)+' years ago' if by>1 else "\n"+str(by)+' year ago'
+    msg = " - "+str(by)+' years ago' if by>1 else " - "+str(by)+' year ago'
     #picURI = obj['THUMBNAIL']
     basename = os.path.basename(obj['DIR'])
     msg = msg+"\n"+basename+"/"+obj['FILE_NAME']
-    qid = duh.getQuickConnectID()
-    if qid:
-        url = SynoWebApiFormatter.VideoPlayerLaunch(qid,os.path.join(obj['DIR'],obj['FILE_NAME']))
+
+    if ip and port and account and pwd:
+        vph = VideoPlayerHelper(ip,port,account,pwd)        
+        url = vph.getVideoViewUrl(obj['DIR'],obj['FILE_NAME'])
         print(url)
-        msg = msg+"\n"+url
+        msg = msg+"\n\n 影片: "+url
 
     return msg
 
@@ -120,7 +123,7 @@ def CreatePhotoMessage(oriYear,obj):
         geoh = GeoHelper(apiKey)
 
     by =datetime.now().year-oriYear
-    msg = "\n"+str(by)+' years ago' if by>1 else "\n"+str(by)+' year ago'
+    msg = " - "+str(by)+' years ago' if by>1 else " - "+str(by)+' year ago'
     #picURI = obj['THUMBNAIL']
     basename = os.path.basename(obj['DIR'])
     msg = msg+"\n"+basename+"/"+obj['FILE_NAME']
