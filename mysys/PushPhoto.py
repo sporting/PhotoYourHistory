@@ -159,11 +159,11 @@ def Push(userId,memoryDate,randomPhotoNumbers):
         catalogs = list(map(lambda data: data['NOTICE_USER_ID'], noticeUser[1]))
         user = noticeUser[0]
 
-        photoFileNames=[]
-        photoThumbnails=[]
+        #photoFileNames=[]
+        #photoThumbnails=[]
         #photoDates = GetManyYearPhotoDates(memoryDate,catalogs)
-        #photoFileNames = (GetPhotosByPhotoDates(photoDates,catalogs,randomPhotoNumbers))
-        #photoThumbnails = (GetPhotosThumbnail(photoFileNames))
+        photoFileNames = (GetPhotosByPhotoDates(photoDates,catalogs,randomPhotoNumbers))
+        photoThumbnails = (GetPhotosThumbnail(photoFileNames))
 
         videoFileNames = GetVideosByVideoDates(photoDates,catalogs,randomPhotoNumbers)
         videoThumbnails = (GetVideosThumbnail(videoFileNames))

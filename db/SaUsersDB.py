@@ -2,6 +2,7 @@
 import sqlite3
 import json
 from db.JsonEncoder import MyEncoder
+from mysys.CryptHelper import CryptHelper
 
 """ 
     system table
@@ -93,7 +94,7 @@ class dbUsersHelper:
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
-            print("deleteUser:"+str(e))            
+            print("deleteUser:"+str(e))                     
 
     def getSMSUsers(self):      
         try:
@@ -125,6 +126,16 @@ class dbUsersHelper:
             self.conn.rollback()
             print("getUserNotice:"+str(e))          
 
+    def setGoogleAPIKey(self,value):        
+        try:
+            cur = self.conn.cursor()
+            cur.execute('''DELETE FROM SYSPARAM WHERE KEY=? ;''',('GOOGLE_MAP_API_KEY',))            
+            cur.execute('''INSERT INTO SYSPARAM (KEY,VALUE,DESC) VALUES (?,?,?);''',('GOOGLE_MAP_API_KEY',value,''))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("setGoogleAPIKey:"+str(e)) 
+
     def getGoogleAPIKey(self):        
         try:
             cur = self.conn.cursor()
@@ -135,6 +146,16 @@ class dbUsersHelper:
             self.conn.rollback()
             print("getGoogleAPIKey:"+str(e))    
 
+    def setQuickConnectID(self,value):        
+        try:
+            cur = self.conn.cursor()
+            cur.execute('''DELETE FROM SYSPARAM WHERE KEY=? ;''',('QUICKCONNECT_ID',))            
+            cur.execute('''INSERT INTO SYSPARAM (KEY,VALUE,DESC) VALUES (?,?,?);''',('QUICKCONNECT_ID',value,''))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("setQuickConnectID:"+str(e)) 
+
     def getQuickConnectID(self):
         try:
             cur = self.conn.cursor()
@@ -143,10 +164,63 @@ class dbUsersHelper:
             return one['value']
         except Exception as e:
             self.conn.rollback()
-            print("getQuickConnectID:"+str(e))                         
+            print("getQuickConnectID:"+str(e))        
 
-if __name__ == "__main__":
-    helper = dbUsersHelper()
-    helper.create()
-    helper.deleteUser('ERIC','LINE NOTIFY','BSwQXMJoXQvABhIdiTyLIDbe1cWL8DxlpFEaUcCZZWA')
-    helper.insertUser(('ERIC','LINE NOTIFY','BSwQXMJoXQvABhIdiTyLIDbe1cWL8DxlpFEaUcCZZWA','ERIC SHIH'))
+   def setNasHostIPPort(self,ip,port):        
+        try:
+            cur = self.conn.cursor()
+            cur.execute('''DELETE FROM SYSPARAM WHERE KEY=? ;''',('SYNOLOGY_HOST_IP',))            
+            cur.execute('''INSERT INTO SYSPARAM (KEY,VALUE,DESC) VALUES (?,?,?);''',('SYNOLOGY_HOST_IP',ip,''))
+
+            cur.execute('''DELETE FROM SYSPARAM WHERE KEY=? ;''',('SYNOLOGY_HOST_PORT',))            
+            cur.execute('''INSERT INTO SYSPARAM (KEY,VALUE,DESC) VALUES (?,?,?);''',('SYNOLOGY_HOST_PORT',port,''))            
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("setNasHostIPPort:"+str(e)) 
+
+    def getNasHostIPPort(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute(''' SELECT value from SYSPARAM where key='SYNOLOGY_HOST_IP' ''')
+            one = cur.fetchone()
+            ip = one['value']
+
+            cur.execute(''' SELECT value from SYSPARAM where key='SYNOLOGY_HOST_PORT' ''')
+            one = cur.fetchone()
+            port = one['value']    
+
+            return ip,port      
+        except Exception as e:
+            self.conn.rollback()
+            print("getNasHostIPPort:"+str(e)) 
+
+   def setNasLoginAccountPwd(self,account,pwd):        
+        try:
+            cur = self.conn.cursor()
+            cur.execute('''DELETE FROM SYSPARAM WHERE KEY=? ;''',('SYNOLOGY_LOGIN_ACCOUNT',))            
+            cur.execute('''INSERT INTO SYSPARAM (KEY,VALUE,DESC) VALUES (?,?,?);''',('SYNOLOGY_LOGIN_ACCOUNT',account,''))
+
+            cur.execute('''DELETE FROM SYSPARAM WHERE KEY=? ;''',('SYNOLOGY_LOGIN_PWD',))            
+            cur.execute('''INSERT INTO SYSPARAM (KEY,VALUE,DESC) VALUES (?,?,?);''',('SYNOLOGY_LOGIN_PWD',pwd,''))            
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print("setNasLoginAccountPwd:"+str(e)) 
+
+    def getNasLoginAccountPwd(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute(''' SELECT value from SYSPARAM where key='SYNOLOGY_LOGIN_ACCOUNT' ''')
+            one = cur.fetchone()
+            ip = one['value']
+
+            cur.execute(''' SELECT value from SYSPARAM where key='SYNOLOGY_LOGIN_PWD' ''')
+            one = cur.fetchone()
+            port = one['value']    
+
+            return ip,port      
+        except Exception as e:
+            self.conn.rollback()
+            print("getNasLoginAccountPwd:"+str(e)) 
+       

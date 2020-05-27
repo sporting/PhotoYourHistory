@@ -135,10 +135,12 @@ class dbPhotoHelper:
             
         except Exception as e:
             print("photoExists:"+str(e))   
+            
     def obseleteVideo(self,rootDir,batchDT):
         cur = self.conn.cursor()
         try:
             cur.execute('''DELETE FROM VIDEOS WHERE ROOT_DIR=? AND BATCH_UTC_DATE<>?''',(rootDir,batchDT))
+            print('obseleteVideo: '+str(cur.rowcount))
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
@@ -163,6 +165,7 @@ class dbPhotoHelper:
         cur = self.conn.cursor()
         try:
             cur.execute('''DELETE FROM PHOTOS WHERE ROOT_DIR=? AND BATCH_UTC_DATE<>?''',(rootDir,batchDT))
+            print('obseletePhoto: '+str(cur.rowcount))
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()

@@ -26,7 +26,7 @@ def maintainMonitorDir():
         folders = fdh.listHasFilesDirectories(rootdir['DIR'])     
         for folder in folders:
             i = i+1
-            print(str(i)+'. '+rootdir['DIR']+' : '+folder)                  
+            #print(str(i)+'. '+rootdir['DIR']+' : '+folder)                  
             dbh.insertDirIfNotExist((folder,False,False,None))    
         evalh.stop()
 
