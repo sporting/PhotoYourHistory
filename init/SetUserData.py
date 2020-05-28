@@ -19,4 +19,5 @@ if __name__ == "__main__":
     if len(sys.argv[1:])>=4:
         #USER_ID,SMS_TYPE,SMS_ID,NAME
         #SMS_TYPE in 'LINE NOTIFY', 'TELEGRAM BOT'
+        print(sys.argv)
         SetUserData((sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4]))

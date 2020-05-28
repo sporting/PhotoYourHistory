@@ -114,7 +114,7 @@ def CreateVideoMessage(oriYear,obj):
     if ip and port and account and pwd:
         vph = VideoPlayerHelper(ip,port,account,pwd)        
         url = vph.getVideoViewUrl(obj['DIR'],obj['FILE_NAME'])
-        print(url)
+        #print(url)
         msg = msg+"\n\n 影片: "+url
 
     return msg
@@ -176,7 +176,7 @@ def Push(userId,memoryDate,randomPhotoNumbers):
         videoFileNames = GetVideosByVideoDates(photoDates,catalogs,randomPhotoNumbers)
         videoThumbnails = (GetVideosThumbnail(videoFileNames))
 
-        print(user['USER_ID'])
+        print(user['USER_ID']+' '+user['SMS_TYPE'])
         print(catalogs)
 
         PhotoMessage = []
@@ -187,7 +187,7 @@ def Push(userId,memoryDate,randomPhotoNumbers):
                 photoMsg = CreatePhotoMessage(data[0].year,obj)
                 picURI = obj['THUMBNAIL']
                 if picURI:
-                    #print(picURI)
+                    print(picURI)
                     PhotoMessage.append({'year':data[0].year,'msg':str(photoMsg),'uri':picURI})
                     #statusCode = line.send(str(photoMsg),picURI)
                     #print(statusCode)
@@ -196,7 +196,7 @@ def Push(userId,memoryDate,randomPhotoNumbers):
                 videoMsg = CreateVideoMessage(data[0].year,obj)
                 picURI = obj['THUMBNAIL']
                 if picURI:
-                    #print(picURI)
+                    print(picURI)
                     VideoMessage.append({'year':data[0].year,'msg':str(videoMsg),'uri':picURI})
                     #statusCode = line.send(str(videoMsg),picURI)
                     #print(statusCode)
@@ -207,7 +207,7 @@ def Push(userId,memoryDate,randomPhotoNumbers):
             for p in PhotoMessage:
                 line.send(p['msg'],p['uri'])
             for v in VideoMessage:
-                line.send(p['msg'],p['uri'])
+                line.send(v['msg'],v['uri'])
         elif user['SMS_TYPE']==SMSType.TelegramBot.value:
             botToken = duh.getTelegramBotAccessToken()
             if not botToken:
@@ -227,10 +227,8 @@ def Push(userId,memoryDate,randomPhotoNumbers):
                     print(r)
 
             for v in VideoMessage:
-                bot.sendText(p['msg'])
-                bot.sendText(p['uri'],p['msg'])
-
-
+                bot.sendText(v['msg'])
+                bot.sendText(v['uri'],v['msg'])
 
 
 if __name__ == "__main__":

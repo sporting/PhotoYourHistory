@@ -89,13 +89,13 @@ class dbUsersHelper:
     def insertUser(self,meta):        
         try:
             cur = self.conn.cursor()
-            cur.execute('''INSERT INTO USERS (USER_ID,SMS_TYPE,SMS_ID,NAME) VALUES (?,?,?);''',(meta[0],meta[1],meta[2],meta[3]))
+            cur.execute('''INSERT INTO USERS (USER_ID,SMS_TYPE,SMS_ID,NAME) VALUES (?,?,?,?);''',(meta[0],meta[1],meta[2],meta[3]))
             self.conn.commit()
             return True
         except Exception as e:
             self.conn.rollback()
+            print("insertUser:"+str(e))            
             return False
-            print("insertUser:"+str(e))
 
     def deleteUser(self,meta):        
         try:
@@ -105,8 +105,8 @@ class dbUsersHelper:
             return True            
         except Exception as e:
             self.conn.rollback()
-            return False            
-            print("deleteUser:"+str(e))                     
+            print("deleteUser:"+str(e))              
+            return False                              
 
     def getSMSUsers(self):      
         try:
@@ -144,8 +144,8 @@ class dbUsersHelper:
             return True            
         except Exception as e:
             self.conn.rollback()
+            print("setGoogleAPIKey:"+str(e))             
             return False            
-            print("setGoogleAPIKey:"+str(e)) 
 
     def getGoogleAPIKey(self):        
         try:
@@ -165,8 +165,8 @@ class dbUsersHelper:
             return True
         except Exception as e:
             self.conn.rollback()
+            print("setQuickConnectID:"+str(e))             
             return False
-            print("setQuickConnectID:"+str(e)) 
 
     def getQuickConnectID(self):
         try:
@@ -189,8 +189,8 @@ class dbUsersHelper:
             return True
         except Exception as e:
             self.conn.rollback()
+            print("setNasHostIPPort:"+str(e))            
             return False
-            print("setNasHostIPPort:"+str(e)) 
 
     def getNasHostIPPort(self):
         try:
@@ -219,8 +219,8 @@ class dbUsersHelper:
             return True
         except Exception as e:
             self.conn.rollback()
+            print("setNasLoginAccountPwd:"+str(e))            
             return False
-            print("setNasLoginAccountPwd:"+str(e))
 
     def getNasLoginAccountPwd(self):
         try:
@@ -246,8 +246,8 @@ class dbUsersHelper:
             return True
         except Exception as e:
             self.conn.rollback()
+            print("setTelegramBotAccessToken:"+str(e))            
             return False
-            print("setTelegramBotAccessToken:"+str(e))
 
     def getTelegramBotAccessToken(self):
         try:
