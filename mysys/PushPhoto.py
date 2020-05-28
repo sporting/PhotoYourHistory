@@ -8,9 +8,14 @@ from date.TimeZoneHelper import TimeZoneHelper
 from date.DateTimeHelper import DateTimeHelper
 from synology.ImageGetter import ImageThumbnailGetter
 from im.LineNotify import LineNotify
+from im.TelegramBot import TelegramBot
+from im.TelegramBotMedia import TelegramBotMedia
+from im.TelegramMediaType import TelegramMediaType
 from google.geoapi import GeoHelper
 from mysys.EvaluateTime import EvaluateTimeHelper
 from synology.VideoPlayerHelper import VideoPlayerHelper
+from mysys.SMSType import SMSType
+from itertools import groupby
 
 """
     Search photos in this date on the past several years
@@ -173,25 +178,60 @@ def Push(userId,memoryDate,randomPhotoNumbers):
 
         print(user['USER_ID'])
         print(catalogs)
-        if user['SMS_TYPE']=='LINE NOTIFY':
-            token = user['SMS_ID']
+
+        PhotoMessage = []
+        VideoMessage = []
+
+        for data in photoThumbnails:
+            for obj in data[1]:
+                photoMsg = CreatePhotoMessage(data[0].year,obj)
+                picURI = obj['THUMBNAIL']
+                if picURI:
+                    #print(picURI)
+                    PhotoMessage.append({'year':data[0].year,'msg':str(photoMsg),'uri':picURI})
+                    #statusCode = line.send(str(photoMsg),picURI)
+                    #print(statusCode)
+        for data in videoThumbnails:
+            for obj in data[1]:
+                videoMsg = CreateVideoMessage(data[0].year,obj)
+                picURI = obj['THUMBNAIL']
+                if picURI:
+                    #print(picURI)
+                    VideoMessage.append({'year':data[0].year,'msg':str(videoMsg),'uri':picURI})
+                    #statusCode = line.send(str(videoMsg),picURI)
+                    #print(statusCode)
+
+        token = user['SMS_ID']        
+        if user['SMS_TYPE']==SMSType.LineNotify.value:
             line = LineNotify(token)
-            for data in photoThumbnails:
-                for obj in data[1]:
-                    photoMsg = CreatePhotoMessage(data[0].year,obj)
-                    picURI = obj['THUMBNAIL']
-                    if picURI:
-                        print(picURI)
-                        statusCode = line.send(str(photoMsg),picURI)
-                        #print(statusCode)
-            for data in videoThumbnails:
-                for obj in data[1]:
-                    videoMsg = CreateVideoMessage(data[0].year,obj)
-                    picURI = obj['THUMBNAIL']
-                    if picURI:
-                        print(picURI)
-                        statusCode = line.send(str(videoMsg),picURI)
-                        #print(statusCode)                    
+            for p in PhotoMessage:
+                line.send(p['msg'],p['uri'])
+            for v in VideoMessage:
+                line.send(p['msg'],p['uri'])
+        elif user['SMS_TYPE']==SMSType.TelegramBot.value:
+            botToken = duh.getTelegramBotAccessToken()
+            if not botToken:
+                print('Must set telegram bot access token. Please type \'python SetBotToken.py [ACCESS_TOKEN]\'')
+                continue
+            bot = TelegramBot(botToken,token)
+
+            for key, groups in groupby(PhotoMessage, lambda photo : photo['year']):
+                gPhoto = list(groups)
+                if len(gPhoto)>1:
+                    bot.sendPhoto(gPhoto[0]['uri'],gPhoto[0]['msg'])
+                else:
+                    gPhotos = []
+                    for g in gPhoto:
+                        gPhotos.append(TelegramBotMedia(TelegramMediaType.Photo,g['uri'],g['msg']))
+                    r=bot.sendMediaGroup(gPhotos)
+                    print(r)
+
+            for v in VideoMessage:
+                bot.sendText(p['msg'])
+                bot.sendText(p['uri'],p['msg'])
+
+
+
 
 if __name__ == "__main__":
     MainProcessSengMsg()

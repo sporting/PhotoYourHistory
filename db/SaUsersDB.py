@@ -54,7 +54,7 @@ class dbUsersHelper:
             DESC            TEXT
             );''')      
 
-            cur.execute('''CREATE INDEX IF NOT EXISTS SYSPARAM_KEY_IDX ON SYSPARAM ( KEY );''')
+            cur.execute('''CREATE INDEX IF NOT EXISTS SYSPARAM_KEY_IDX ON SYSPARAM ( KEY );''')          
 
         except Exception as e:
             print(e)
@@ -77,6 +77,15 @@ class dbUsersHelper:
 #            self.conn.rollback()
 #            print("deleteGroup:"+str(e))  
 
+    def setUserData(self,meta):        
+        try:
+            self.deleteUser(meta)      
+            self.insertUser(meta)
+        except Exception as e:
+            self.conn.rollback()
+            return False            
+            print("setUserData:"+str(e)) 
+
     def insertUser(self,meta):        
         try:
             cur = self.conn.cursor()
@@ -88,10 +97,10 @@ class dbUsersHelper:
             return False
             print("insertUser:"+str(e))
 
-    def deleteUser(self,userId,smsType,smsId):        
+    def deleteUser(self,meta):        
         try:
             cur = self.conn.cursor()
-            cur.execute('''DELETE FROM USERS WHERE USER_ID=? AND SMS_TYPE=? AND SMS_ID=?;''',(userId,smsType,smsId))
+            cur.execute('''DELETE FROM USERS WHERE USER_ID=? AND SMS_TYPE=? ;''',(meta[0],meta[1]))
             self.conn.commit()
             return True            
         except Exception as e:
@@ -228,3 +237,24 @@ class dbUsersHelper:
         except Exception as e:
             print("getNasLoginAccountPwd:"+str(e))
        
+    def setTelegramBotAccessToken(self,token):
+        try:
+            cur = self.conn.cursor()
+            cur.execute('''DELETE FROM SYSPARAM WHERE KEY=? ;''',('TELEGRAM_BOT_TOKEN',))            
+            cur.execute('''INSERT INTO SYSPARAM (KEY,VALUE,DESC) VALUES (?,?,?);''',('TELEGRAM_BOT_TOKEN',token,''))
+            self.conn.commit()
+            return True
+        except Exception as e:
+            self.conn.rollback()
+            return False
+            print("setTelegramBotAccessToken:"+str(e))
+
+    def getTelegramBotAccessToken(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute(''' SELECT value from SYSPARAM where key='TELEGRAM_BOT_TOKEN' ''')
+            one = cur.fetchone()
+
+            return one['value']
+        except Exception as e:
+            print("getTelegramBotAccessToken:"+str(e))       

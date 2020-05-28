@@ -1,11 +1,12 @@
 # -*- coding: UTF-8 -*-
 import requests, os
+from im.IMMessage import IMMessage
 
 """
     Line Notify API handler
 """
 
-class LineNotify():
+class LineNotify(IMMessage):
     def __init__(self, token):
         self.token = token
 

@@ -10,4 +10,3 @@ requests
 scipy
 cmake
 dlib
-face_recognition
