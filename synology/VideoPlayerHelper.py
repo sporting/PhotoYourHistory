@@ -5,12 +5,13 @@ import urllib.request
 import ssl
 import json
 from urllib import parse
+from pathlib import Path
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
 class VideoPlayerHelper:
     loginUrl = '''https://{SYNOLOGY_HOST_IP}:{SYNOLOGY_HOST_PORT}/webapi/auth.cgi?api=SYNO.API.Auth&version=6&method=login&account={account}&passwd={password}&session=FileStation&format=cookie'''
-    url = '''https://{SYNOLOGY_HOST_IP}:{SYNOLOGY_HOST_PORT}/fbdownload/{fileName}?dlink="{dLink}"&_sid="{SID}"&mode=open'''
+    url = '''https://{SYNOLOGY_HOST_IP}:{SYNOLOGY_HOST_PORT}/fbdownload/{fileName}?'''
 
     def __init__(self,hostIP,hostPort,account,password):
         self.hostIP = hostIP
@@ -47,6 +48,7 @@ class VideoPlayerHelper:
         url = self.loginUrl
         url = url.replace('{SYNOLOGY_HOST_IP}',self.hostIP)
         url = url.replace('{SYNOLOGY_HOST_PORT}',self.hostPort)
+        
         url = url.replace('{account}',self.account)
         url = url.replace('{password}',self.password)
         try:
@@ -66,13 +68,20 @@ class VideoPlayerHelper:
         fullPath = fullPath.replace('/var/services','')
 
         dLink = self.bin2hex(fullPath)
-
+        ext = Path(fileName).suffix
         url = self.url
         url = url.replace('{SYNOLOGY_HOST_IP}',self.hostIP)
         url = url.replace('{SYNOLOGY_HOST_PORT}',self.hostPort)        
-        url = url.replace('{fileName}',fileName)
-        url = url.replace('{dLink}',dLink)
-        url = url.replace('{SID}',self.SID)
+        #url = url.replace('{fileName}',fileName)
+        url = url.replace('{fileName}','memory'+ext)
+
+        params = {"dlink":dLink,"_sid":self.SID,"mode":"open"}
+        encodeParams = parse.urlencode(params)
+
+        url=url+encodeParams
+
+        #url = url.replace('{dLink}',dLink)
+        #url = url.replace('{SID}',self.SID)
 
         return self.CreateShortUrl(url) if shortenFalg else url
 

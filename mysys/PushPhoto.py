@@ -106,7 +106,7 @@ def CreateVideoMessage(oriYear,obj):
     account,pwd = duh.getNasLoginAccountPwd()
 
     by =datetime.now().year-oriYear
-    msg = " - "+str(by)+' years ago' if by>1 else " - "+str(by)+' year ago'
+    msg = str(by)+' years ago' if by>1 else str(by)+' year ago'
     #picURI = obj['THUMBNAIL']
     basename = os.path.basename(obj['DIR'])
     msg = msg+"\n"+basename+"/"+obj['FILE_NAME']
@@ -128,7 +128,7 @@ def CreatePhotoMessage(oriYear,obj):
         geoh = GeoHelper(apiKey)
 
     by =datetime.now().year-oriYear
-    msg = " - "+str(by)+' years ago' if by>1 else " - "+str(by)+' year ago'
+    msg = str(by)+' years ago' if by>1 else str(by)+' year ago'
     #picURI = obj['THUMBNAIL']
     basename = os.path.basename(obj['DIR'])
     msg = msg+"\n"+basename+"/"+obj['FILE_NAME']
@@ -144,7 +144,7 @@ def CreatePhotoMessage(oriYear,obj):
                 dbh.UpdateGeoAddress(obj['FILE_NAME'],obj['DIR'],address)
     return msg
 
-def Push(userId,memoryDate,randomPhotoNumbers):
+def Push(users,memoryDate,randomPhotoNumbers):
     """
         Integrate all the processes.
         1. Get care list.
@@ -158,7 +158,7 @@ def Push(userId,memoryDate,randomPhotoNumbers):
     #memoryDate = datetime.today()
     duh = dbUsersHelper()
     #users = duh.getSMSUsers()
-    users = duh.getSMSUser(userId)
+    #users = duh.getSMSUser(userId)
     noticeUsers = map(lambda user: (user,duh.getUserNotice(user['USER_ID'])),users)
     print(memoryDate)
     photoDates = list(GetManyYearPhotoDates(memoryDate))
@@ -217,18 +217,18 @@ def Push(userId,memoryDate,randomPhotoNumbers):
 
             for key, groups in groupby(PhotoMessage, lambda photo : photo['year']):
                 gPhoto = list(groups)
-                if len(gPhoto)>1:
+                if len(gPhoto)<=1:
                     bot.sendPhoto(gPhoto[0]['uri'],gPhoto[0]['msg'])
                 else:
                     gPhotos = []
                     for g in gPhoto:
                         gPhotos.append(TelegramBotMedia(TelegramMediaType.Photo,g['uri'],g['msg']))
                     r=bot.sendMediaGroup(gPhotos)
-                    print(r)
+                    #print(r)
 
             for v in VideoMessage:
-                bot.sendText(v['msg'])
-                bot.sendText(v['uri'],v['msg'])
+                #bot.sendText(v['msg'])
+                bot.sendPhoto(v['uri'],v['msg'])
 
 
 if __name__ == "__main__":

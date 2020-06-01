@@ -6,5 +6,4 @@ import mysys.PushPhoto as PhotoService
 if __name__ == "__main__":    
     duh = dbUsersHelper()
     users = duh.getSMSUsers()    
-    for user in users:
-        PhotoService.Push(user['USER_ID'],datetime.today(),3)            
+    PhotoService.Push(users,datetime.today(),3)
