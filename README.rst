@@ -1,5 +1,5 @@
 ===============================
-PhotoYourHistory - like Facebook "On This Day"
+PhotoYourHistory
 ===============================
 |LastCommit| |License|
 
