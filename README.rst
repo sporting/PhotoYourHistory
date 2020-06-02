@@ -64,14 +64,13 @@ Then, set instant message token:
 	
 * If you prefer Telegram to remind you. (suggest)	
 
-  You have to find telegram @BotFather to apply a new bot, then set the access token. (in e.g. 9876543210:BE2e2QNaXupnaBsrcNGq1gGzxeE_PSN94qxw)
+You have to find telegram @BotFather to apply a new bot, then set the access token. (in e.g. 9876543210:BE2e2QNaXupnaBsrcNGq1gGzxeE_PSN94qxw)
 
 .. code-block:: sh	
 
 	$ python init/SetBotToken.py [YOUR_TELEGRAM_BOT_ACCESS_TOKEN]
 
-
-  You could get your telegram id from telegram @IDBot, then set the telegram. (in e.g. 1234567890)
+You could get your telegram id from telegram @IDBot, then set the telegram. (in e.g. 1234567890)
 
 .. code-block:: sh
 
@@ -143,6 +142,7 @@ Add Task In Synology Nas
 * Monitor root folder and indexing photo
 
 .. code-block:: sh
+
 	$ export LANG='en_US.UTF-8'
 	$ export LC_ALL='en_US.UTF-8'
 	$ cd [YOUR_REPOSITORY_DIRECTORY]
@@ -153,6 +153,7 @@ Add Task In Synology Nas
 * Push photo
 
 .. code-block:: sh
+
 	$ export LANG='en_US.UTF-8'
 	$ export LC_ALL='en_US.UTF-8'
 	$ cd [YOUR_REPOSITORY_DIRECTORY]
