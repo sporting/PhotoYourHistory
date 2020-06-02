@@ -70,6 +70,7 @@ Then, set instant message token:
 
 	$ python init/SetBotToken.py [YOUR_TELEGRAM_BOT_ACCESS_TOKEN]
 
+
   You could get your telegram id from telegram @IDBot, then set the telegram. (in e.g. 1234567890)
 
 .. code-block:: sh
