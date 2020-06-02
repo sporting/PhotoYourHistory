@@ -87,6 +87,7 @@ Finally, set the catagory you would like to care. The project will push the phot
 For example, Eric would like to receive the photo is about Alice, Linda and himself.
 
 .. code-block:: sh
+
 	$ #Sample
 	$ python init/SetCareCatagory.py Eric Alice Linda Eric	
 	$ # syntax like below
