@@ -2,8 +2,6 @@ SaPhoto.db
 SaUsers.db
 .vscode/
 __pycache__/
-.vscodes/
-__pycache__s/
 __pycache__/AutoInsertMonitorDir.cpython-37.pyc
 __pycache__/DateTimeHelper.cpython-37.pyc
 __pycache__/ExifHelper.cpython-37.pyc
