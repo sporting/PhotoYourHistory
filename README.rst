@@ -90,7 +90,7 @@ For example, Eric would like to receive the photo is about Alice, Linda and hims
 .. code-block:: sh
 	$ #Sample
 	$ python init/SetCareCatagory.py Eric Alice Linda Eric
-	$
+	
 	$ # syntax like below
 	$ python init/SetCareCatagory.py [YOUR_FAVORITE_ID] [YOUR_CARE_LIST_1] [YOUR_CARE_LIST_2] [YOUR_CARE_LIST_?]
 	
@@ -121,7 +121,7 @@ You have to catagory your photo, make a new python file named 'MyCatalogEncoder.
 
 CatalogEncoder use directory name to catagory your photo.
 
--- code-block:: python
+.. code-block:: python
 
     >>> from db.CatalogEncoder import CatalogEncoder
     >>> class MyCatalogEncoder(CatalogEncoder):
@@ -143,7 +143,7 @@ Add Task In Synology Nas
 ~~~~~~~~~~~~~~~~~~~~~~~~
 * Monitor root folder and indexing photo
 
--- code-block:: sh
+.. code-block:: sh
 	$ export LANG='en_US.UTF-8'
 	$ export LC_ALL='en_US.UTF-8'
 	$ cd [YOUR_REPOSITORY_DIRECTORY]
@@ -153,7 +153,7 @@ Add Task In Synology Nas
 	
 * Push photo
 
--- code-block:: sh
+.. code-block:: sh
 	$ export LANG='en_US.UTF-8'
 	$ export LC_ALL='en_US.UTF-8'
 	$ cd [YOUR_REPOSITORY_DIRECTORY]
