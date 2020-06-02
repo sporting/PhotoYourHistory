@@ -45,6 +45,9 @@ class VideoPlayerHelper:
         return ''.join(n)     
     
     def loginSynology(self):
+        if not (self.hostIP and self.hostPort and self.account and self.password):
+            return None
+
         url = self.loginUrl
         url = url.replace('{SYNOLOGY_HOST_IP}',self.hostIP)
         url = url.replace('{SYNOLOGY_HOST_PORT}',self.hostPort)

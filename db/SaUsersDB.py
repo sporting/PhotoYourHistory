@@ -258,3 +258,16 @@ class dbUsersHelper:
             return one['value']
         except Exception as e:
             print("getTelegramBotAccessToken:"+str(e))       
+
+    def setCareCatagory(self,who,carelist):
+        try:
+            cur = self.conn.cursor()
+            cur.execute('''DELETE FROM USER_NOTICE WHERE USER_ID=? ;''',(who,))            
+            for care in carelist:
+                cur.execute('''INSERT INTO USER_NOTICE (USER_ID,NOTICE_USER_ID) VALUES (?,?);''',(who,care))
+            self.conn.commit()
+            return True
+        except Exception as e:
+            self.conn.rollback()
+            print("setCareCatagory:"+str(e))            
+            return False
