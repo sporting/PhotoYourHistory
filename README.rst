@@ -1,7 +1,7 @@
 ===============================
 PhotoYourHistory - like Facebook "On This Day"
 ===============================
-|LastCommit| |DownloadTimes| |License|
+|LastCommit| |License|
 
 Use PhotoYourHistory to index your photos/videos in nas.
 
