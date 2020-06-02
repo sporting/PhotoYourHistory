@@ -19,8 +19,11 @@ Push photos/videos of the same period through instant message every day.
 Hardware Requirement
 --------------------
 Hard drive with many photos. 
+
 The project is running on my synology nas.
+
 I have about 400,000 photos in my synology nas.
+
 The best practice is running in your synology nas.
 
 Nas Model
@@ -60,6 +63,7 @@ Then, set the root folder to monitor.  (in e.g. /var/services/photo/2019/ , /var
 Then, set instant message token:
 	
 * If you prefer Telegram to remind you. (suggest)	
+
   You have to find telegram @BotFather to apply a new bot, then set the access token. (in e.g. 9876543210:BE2e2QNaXupnaBsrcNGq1gGzxeE_PSN94qxw)
 
 .. code-block:: sh	
@@ -79,6 +83,7 @@ Then, set instant message token:
     $ python init/SetUserData.py [YOUR_FAVORITE_ID] "LINE NOTIFY" [LINE_NOTIFY_TOKEN] [YOUR_FAVORITE_NAME]
 
 Finally, set the catagory you would like to care. The project will push the photo you care.
+
 For example, Eric would like to receive the photo is about Alice, Linda and himself.
 
 .. code-block:: sh
@@ -89,7 +94,9 @@ For example, Eric would like to receive the photo is about Alice, Linda and hims
 	$ python init/SetCareCatagory.py [YOUR_FAVORITE_ID] [YOUR_CARE_LIST_1] [YOUR_CARE_LIST_2] [YOUR_CARE_LIST_?]
 	
 Option, we will get gps information from exif. If you would like to know where the photo is taken. 
+
 This project use google map geolocation api to get the address from gps.
+
 So, set the google map api key. (google map api has free quota.)
 
 .. code-block:: sh
@@ -97,6 +104,7 @@ So, set the google map api key. (google map api has free quota.)
 	$ python init/SetGoogleMapApi.py [YOUR_GOOGLE_MAP_API_KEY]
 	
 Option, if you would like to view the video from nas in your mobile.
+
 Set the four information, nas ip or domain, port, account (could access the photo directory), password.
 
 .. code-block:: sh
@@ -109,6 +117,7 @@ Set the four information, nas ip or domain, port, account (could access the phot
 Development
 ~~~~~~~~~~~
 You have to catagory your photo, make a new python file named 'MyCatalogEncoder.py' in the directory 'db'.
+
 CatalogEncoder use directory name to catagory your photo.
 
 -- code-block:: python
