@@ -89,8 +89,7 @@ For example, Eric would like to receive the photo is about Alice, Linda and hims
 
 .. code-block:: sh
 	$ #Sample
-	$ python init/SetCareCatagory.py Eric Alice Linda Eric
-	
+	$ python init/SetCareCatagory.py Eric Alice Linda Eric	
 	$ # syntax like below
 	$ python init/SetCareCatagory.py [YOUR_FAVORITE_ID] [YOUR_CARE_LIST_1] [YOUR_CARE_LIST_2] [YOUR_CARE_LIST_?]
 	
