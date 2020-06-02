@@ -13,8 +13,8 @@ Push photos/videos of the same period through instant message every day.
     :alt: License
 .. |LastCommit| image:: https://img.shields.io/github/last-commit/sporting/PhotoYourHistory   
 	:alt: GitHub last commit	
-.. |DownloadTimes| image:: https://img.shields.io/github/downloads/sporting/PhotoYourHistory/latest/total
-   :alt: GitHub Releases	
+.. |DownloadTimes| image:: https://img.shields.io/github/downloads/sporting/PhotoYourHistory/v1.20.6.1/total
+   :alt: GitHub Releases
 
 Hardware Requirement
 --------------------
