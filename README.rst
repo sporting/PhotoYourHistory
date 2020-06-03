@@ -24,7 +24,7 @@ Push photos/videos of the same period through instant message every day.
 .. |TelegramVideo01| image:: res/792583.jpg
     :width: 200px
     :height: 100px
-.. |LineNotifyImage01| image:: res/782586.jpg
+.. |LineNotifyImage01| image:: res/792586.jpg
     :width: 200px
     :height: 100px
 
