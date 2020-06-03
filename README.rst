@@ -76,7 +76,7 @@ You could get your telegram id from telegram @IDBot, then set the telegram. (in 
 
     $ python init/SetUserData.py [YOUR_FAVORITE_ID] "TELEGRAM" [TELEGRAM_ID] [YOUR_FAVORITE_NAME]
 
-* If you prefer LINE Notify to remind you.
+* If you prefer `LINE Notify`_ to remind you.
 
 .. code-block:: sh
 	
