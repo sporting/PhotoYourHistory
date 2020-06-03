@@ -11,6 +11,7 @@ Push photos/videos of the same period through instant message every day.
 .. _`@IDBot`: https://telegram.me/IDBot
 .. _`LINE Notify`: https://notify-bot.line.me/my/
 .. _`DS214Play`: https://www.synology.com/zh-tw/support/download/DS214play
+.. _`Synology – Installing Python PIP package installer`: https://primalcortex.wordpress.com/2016/01/25/synology-installing-python-pip-package-installer/
 .. |License| image:: https://img.shields.io/github/license/sporting/photoyourhistory
     :target: https://github.com/sporting/PhotoYourHistory/blob/master/LICENSE	         
     :alt: License
@@ -52,7 +53,9 @@ Getting Started
 Set Environment
 ~~~~~~~~~~~~~~~
 Assuming that you have Python and ``virtualenv`` installed, set up your
-environment and install the required dependencies:
+environment and install the required dependencies.
+
+`Synology – Installing Python PIP package installer`_
 
 First, login to your nas by SSH and download the repository to your nas.
 
