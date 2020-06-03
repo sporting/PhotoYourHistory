@@ -14,16 +14,13 @@ Push photos/videos of the same period through instant message every day.
 .. |LastCommit| image:: https://img.shields.io/github/last-commit/sporting/PhotoYourHistory   
 	:alt: GitHub last commit	
 .. |DownloadTimes| image:: https://img.shields.io/github/downloads/sporting/PhotoYourHistory/v1.20.6.1/total
-   :alt: GitHub Releases
+    :alt: GitHub Releases
 .. |TelegramImage01| image:: res/792584.jpg
-	:width: 300
-	:height: 600
+    :scale: 30 %
 .. |TelegramImage01Big| image:: res/792585.jpg
-	:width: 300
-	:height: 600
+    :scale: 30 %
 .. |TelegramVideo01| image:: res/792583.jpg
-	:width: 300
-	:height: 600
+    :scale: 30 %
 
 
 Hardware Requirement
