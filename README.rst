@@ -7,7 +7,10 @@ Use PhotoYourHistory to index your photos/videos in nas.
 
 Push photos/videos of the same period through instant message every day.
 
+.. _`@BotFather`: https://telegram.me/BotFather
+.. _`@IDBot`: https://telegram.me/IDBot
 .. _`LINE Notify`: https://notify-bot.line.me/my/
+.. _`DS214Play`: https://www.synology.com/zh-tw/support/download/DS214play
 .. |License| image:: https://img.shields.io/github/license/sporting/photoyourhistory
     :target: https://github.com/sporting/PhotoYourHistory/blob/master/LICENSE	         
     :alt: License
@@ -39,9 +42,9 @@ I have about 400,000 photos in my synology nas.
 
 The best practice is running in your synology nas.
 
-Nas Model
+My Nas Model
 ---------
-Synology DS214Play
+Synology `DS214Play`_: DSM 6.2.3
 	
 Getting Started
 ---------------
@@ -77,13 +80,13 @@ Then, set instant message token:
 	
 * If you prefer Telegram to remind you. (suggest)	
 
-You have to find telegram @BotFather to apply a new bot, then set the access token. (in e.g. 9876543210:BE2e2QNaXupnaBsrcNGq1gGzxeE_PSN94qxw)
+You have to find telegram `@BotFather`_ to apply a new bot, then set the access token. (in e.g. 9876543210:BE2e2QNaXupnaBsrcNGq1gGzxeE_PSN94qxw)
 
 .. code-block:: sh	
 
 	$ python init/SetBotToken.py [YOUR_TELEGRAM_BOT_ACCESS_TOKEN]
 
-You could get your telegram id from telegram @IDBot, then set the telegram. (in e.g. 1234567890)
+You could get your telegram id from telegram `@IDBot`_, then set the telegram. (in e.g. 1234567890)
 
 .. code-block:: sh
 
