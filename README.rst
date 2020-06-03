@@ -55,7 +55,7 @@ Set Environment
 Assuming that you have Python and ``virtualenv`` installed, set up your
 environment and install the required dependencies.
 
-`Synology – Installing Python PIP package installer`_
+Maybe you should install pip first. `Synology – Installing Python PIP package installer`_
 
 First, login to your nas by SSH and download the repository to your nas.
 
