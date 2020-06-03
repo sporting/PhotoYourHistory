@@ -31,6 +31,9 @@ Push photos/videos of the same period through instant message every day.
 .. |LineNotifyImage01| image:: res/792586.jpg
     :width: 200px
     :height: 100px
+.. |LineNotifyVideo01| image:: res/792587.jpg
+	:width: 200px
+	:height: 100px
 
 
 Hardware Requirement
@@ -63,7 +66,7 @@ Next, create python environment in repository folder.
 
 .. code-block:: sh
 
-	$ cd [YOUR REPOSITORY FOLDER]
+	$ cd [YOUR_REPOSITORY_FOLDER]
 	$ python3 -m venv env
 	$ source env/bin/activate
 
@@ -194,6 +197,10 @@ Preview
 
 |TelegramVideo01|
 
-* Line Notify Sample
+* Line Notify Photo Sample
 
 |LineNotifyImage01|
+
+* Line Notify Video Sample
+
+|LineNotifyVideo01|
