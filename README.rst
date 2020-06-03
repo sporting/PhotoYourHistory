@@ -20,7 +20,11 @@ Push photos/videos of the same period through instant message every day.
     :align: center
     :height: 100px
     :alt: alternate text
-.. |TelegramImage01Big| image:: res/792585.jpg   
+.. |TelegramImage01Big| image:: res/792585.jpg
+    :width: 200px
+    :align: center
+    :height: 100px
+    :alt: alternate text
 .. |TelegramVideo01| image:: res/792583.jpg
 
 
