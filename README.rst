@@ -15,6 +15,10 @@ Push photos/videos of the same period through instant message every day.
 	:alt: GitHub last commit	
 .. |DownloadTimes| image:: https://img.shields.io/github/downloads/sporting/PhotoYourHistory/v1.20.6.1/total
    :alt: GitHub Releases
+.. |TelegramImage01| image:: res/792584.jpg
+.. |TelegramImage01Big| image:: res/792585.jpg
+.. |TelegramVideo01| image:: res/792583.jpg
+
 
 Hardware Requirement
 --------------------
@@ -160,3 +164,12 @@ Add Task In Synology Nas
 	$ cd [YOUR_REPOSITORY_DIRECTORY]
 	$ source env/bin/activate
 	$ PYTHONIOENCODING=utf-8 python DailyPushPhotoThisDay.py
+
+Preview
+~~~~~~~
+
+|TelegramImage01|
+
+|TelegramImage01Big|
+
+|TelegramVideo01|
