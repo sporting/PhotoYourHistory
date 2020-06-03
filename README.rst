@@ -21,8 +21,12 @@ Push photos/videos of the same period through instant message every day.
 .. |TelegramImage01Big| image:: res/792585.jpg
     :width: 200px
     :height: 100px
-    :alt: alternate text
 .. |TelegramVideo01| image:: res/792583.jpg
+    :width: 200px
+    :height: 100px
+.. |LineNotifyImage01| image:: res/782586.jpg
+    :width: 200px
+    :height: 100px
 
 
 Hardware Requirement
@@ -172,9 +176,18 @@ Add Task In Synology Nas
 
 Preview
 ~~~~~~~
+* Telegram MediaGroup Sample
 
 |TelegramImage01|
 
+* Telegram Photo Sample
+
 |TelegramImage01Big|
 
+* Telegram Video Sample
+
 |TelegramVideo01|
+
+* Line Notify Sample
+
+|LineNotifyImage01|
