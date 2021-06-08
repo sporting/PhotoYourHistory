@@ -3,7 +3,7 @@ chardet==3.0.4
 googlemaps==4.3.1
 idna==2.9
 numpy===1.18.4
-Pillow==7.1.2
+Pillow==8.2.0
 python-dateutil==2.8.1
 pytz==2020.1
 requests==2.23.0
