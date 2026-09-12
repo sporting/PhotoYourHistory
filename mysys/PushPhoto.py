@@ -8,6 +8,9 @@ from date.TimeZoneHelper import TimeZoneHelper
 from date.DateTimeHelper import DateTimeHelper
 from synology.ImageGetter import ImageThumbnailGetter
 from im.LineNotify import LineNotify
+from im.LineMessagingApi import LineMessagingApi
+from im.LineConfig import LineConfig
+from tools.LineImageDelivery import SignedImageDelivery
 from im.TelegramBot import TelegramBot
 from im.TelegramBotMedia import TelegramBotMedia
 from im.TelegramMediaType import TelegramMediaType
@@ -201,8 +204,22 @@ def Push(users,memoryDate,randomPhotoNumbers):
                     #statusCode = line.send(str(videoMsg),picURI)
                     #print(statusCode)
 
-        token = user['SMS_ID']        
-        if user['SMS_TYPE']==SMSType.LineNotify.value:
+        token = user['SMS_ID']
+        if user['SMS_TYPE']==SMSType.LineMessagingApi.value:
+            try:
+                config = LineConfig.from_environment()
+                config.require_destination(token)
+                delivery = SignedImageDelivery(
+                    config.image_base_url,
+                    config.image_signing_secret,
+                    config.image_roots,
+                    config.image_ttl_seconds,
+                )
+                line = LineMessagingApi(config.channel_access_token)
+                line.push_selected(token, PhotoMessage + VideoMessage, delivery, config)
+            except Exception as error:
+                print('LINE Messaging API skipped: {0}'.format(error))
+        elif user['SMS_TYPE']==SMSType.LineNotify.value:
             line = LineNotify(token)
             for p in PhotoMessage:
                 line.send(p['msg'],p['uri'])
