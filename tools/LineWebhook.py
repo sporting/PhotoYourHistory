@@ -36,7 +36,11 @@ class _Handler(BaseHTTPRequestHandler):
     capture_path = 'line-group-events.jsonl'
 
     def do_POST(self):
-        length = int(self.headers.get('Content-Length', '0'))
+        try:
+            length = int(self.headers.get('Content-Length', '0'))
+        except ValueError:
+            self.send_error(400, 'invalid content length')
+            return
         if length > 1024 * 1024:
             self.send_error(413)
             return
