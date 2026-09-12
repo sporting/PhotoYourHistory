@@ -72,8 +72,12 @@ def baseline(database_path, roots, run=False):
             index_started = time.time()
             try:
                 results = []
-                for row in store.get_monitor_dirs():
-                    results.append(store.index_directory(row['DIR'], bool(row['RECURSIVE'])))
+                if roots:
+                    results = [store.index_directory(root, recursive=True)
+                               for root in effective_roots]
+                else:
+                    for row in store.get_monitor_dirs():
+                        results.append(store.index_directory(row['DIR'], bool(row['RECURSIVE'])))
             finally:
                 store.close()
             result['batch_index_seconds'] = round(time.time() - index_started, 6)
