@@ -1,74 +1,72 @@
 # -*- coding: UTF-8 -*-
-import os
-import fnmatch
-from datetime import datetime
+"""Enumerate media files on a Synology volume.
 
+The legacy implementation used atime as a filter and matched each case
+variant separately.  atime is not a reliable signal on NAS volumes, so the
+indexer now performs a complete scan of each monitored directory.
 """
-    Class logic depends on the synology nas.
-"""
+
+import fnmatch
+import os
+
+
+SKIPPED_DIRECTORY_NAMES = frozenset(("@eadir", "#recycle", ".thumbnail"))
+
+
+def _iter_files(path, extensions, localtimestamp=None, recursive=False):
+    if not os.path.isdir(path):
+        return
+
+    normalized_extensions = tuple(extension.casefold() for extension in extensions)
+    for dir_path, dir_names, file_names in os.walk(path):
+        dir_names[:] = [
+            name for name in dir_names
+            if name.casefold() not in SKIPPED_DIRECTORY_NAMES
+        ]
+        for filename in sorted(file_names, key=str.casefold):
+            if not any(fnmatch.fnmatchcase(filename.casefold(), pattern)
+                       for pattern in normalized_extensions):
+                continue
+            filepath = os.path.join(dir_path, filename)
+            if localtimestamp is not None:
+                try:
+                    if os.path.getmtime(filepath) < localtimestamp:
+                        continue
+                except OSError:
+                    continue
+            yield filepath
+        if not recursive:
+            break
+
 
 class DirectoryHelper:
-    def listHasFilesDirectories(self,path):
-        """
-            List all directories that contain files
-            except #eaDir, #recycle, #.thumbnail
-        """
-        for p,d,f in os.walk(path):
-            #for synology nas 
-            if p.find('/@eaDir')<0 and p.find('/#recycle')<0 and p.find('/.thumbnail')<0 and (len(f)>0):
-                yield p
+    def listHasFilesDirectories(self, path):
+        """Yield media directories while excluding Synology metadata trees."""
+        if not os.path.isdir(path):
+            return
+        for directory, dir_names, file_names in os.walk(path):
+            dir_names[:] = [
+                name for name in dir_names
+                if name.casefold() not in SKIPPED_DIRECTORY_NAMES
+            ]
+            if file_names:
+                yield directory
 
-#mtime modify date
-#ctime create date
-#atime access date
+
 class ImageFileHelper:
-    #windows is case insensitive, windows will run twice *.jpg&*.JPG
-    #Linux is case sensitive
-    EXTENSIONS = ['*.jpg', '*.jpeg', '*.png','*.JPG','*.JPEG','*.PNG'] 
-    def getFiles(self,path,localtimestamp=None,recursive=False):
-        """
-            List image files
-        """
-        for dirPath, dirNames, fileNames in os.walk(path):
-            for ext in self.EXTENSIONS:
-                for filename in fnmatch.filter(fileNames, ext):                    
-                    filepath = os.path.join(dirPath, filename)
-                    #only find new file by access time (atime)
-                    if localtimestamp:
-                        atime = os.path.getatime(filepath)
-                        if atime>=localtimestamp:
-                            yield filepath 
-                    else:
-                        yield filepath
+    EXTENSIONS = ("*.jpg", "*.jpeg", "*.png")
 
-            if not recursive:
-                break
+    def getFiles(self, path, localtimestamp=None, recursive=False):
+        return _iter_files(path, self.EXTENSIONS, localtimestamp, recursive)
+
 
 class VideoFileHelper:
-    EXTENSIONS = ['*.avi','*.AVI','*.mpg','*.MPG','*.mpeg','*.MPEG','*.mov','*.MOV','*.mp4','*.MP4','*.wmv','*.WMV',
-    '*.m2t','*.M2T','*.m2ts','*.M2TS','*.mts','*.MTS','*.asf','*.ASF','*.swf','*.SWF','*.3gp','*.3GP','*.3gp2','*.3GP2','*.rm','*.RM','*.qt','*.QT'] 
-    def getFiles(self,path,localtimestamp=None,recursive=False):
-        """
-            List image files
-        """
-        for dirPath, dirNames, fileNames in os.walk(path):
-            for ext in self.EXTENSIONS:
-                for filename in fnmatch.filter(fileNames, ext):                    
-                    filepath = os.path.join(dirPath, filename)
-                    #only find new file by access time (atime)
-                    if localtimestamp:
-                        atime = os.path.getatime(filepath)
-                        if atime>=localtimestamp:
-                            yield filepath 
-                    else:
-                        yield filepath
+    EXTENSIONS = (
+        "*.avi", "*.mpg", "*.mpeg", "*.mov", "*.mp4", "*.wmv", "*.m2t",
+        "*.m2ts", "*.mts", "*.asf", "*.swf", "*.3gp", "*.3gp2", "*.rm",
+        "*.qt",
+    )
 
-            if not recursive:
-                break
+    def getFiles(self, path, localtimestamp=None, recursive=False):
+        return _iter_files(path, self.EXTENSIONS, localtimestamp, recursive)
 
-if __name__ == "__main__":
-    helper = ImageHelper()
-    d = datetime(2020, 5, 6, 0, 0)
-    ts = datetime.timestamp(d)
-    ff = helper.getFiles('D:\\private\\WorkArea\\PhotoThisDay\\',ts,recursive=True)
-    print(list(ff))

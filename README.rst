@@ -208,6 +208,24 @@ The report directory contains ``audit_summary.json``, ``missing_from_db.csv``,
 ``db_missing_from_filesystem.csv``, ``unsupported_extensions.csv``, and
 ``null_photo_date.csv``.
 
+Backfill Missing Index Rows
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The normal indexer no longer trusts directory mtime and does not delete stale
+rows after a partial scan. Use the read-only audit first, then review
+``missing_from_db.csv``. ``tools/BackfillPhotoIndex.py`` is a dry run unless
+``--apply`` is explicitly supplied; it only inserts missing database rows and
+never moves, deletes, or modifies source photos/videos.
+
+.. code-block:: sh
+
+	$ python tools/BackfillPhotoIndex.py --db SaPhoto.db
+	$ python tools/BackfillPhotoIndex.py --db SaPhoto.db --apply
+
+If the audit reports unsupported extensions, install a decoder/indexing rule
+for that format before backfilling it. An audit with scan errors must be
+resolved and rerun before using the result as a completeness statement.
+
 Preview
 ~~~~~~~
 * Telegram MediaGroup Sample
