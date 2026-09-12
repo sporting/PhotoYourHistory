@@ -260,7 +260,52 @@ run ``--vacuum --backup /safe/path/SaPhoto.before-vacuum.db`` during a quiet
 maintenance window. The backup is made with SQLite's backup API and the
 command never touches source photos/videos.
 
-LINE Messaging API\n~~~~~~~~~~~~~~~~~~\n\nLINE Notify is no longer used for new delivery. The Messaging API transport\nrequires environment variables; copy ``line.env.example`` to a private NAS\nfile and fill in the values. Never commit that private file.\n\n.. code-block:: sh\n\n\t$ cp line.env.example line.env\n\t$ chmod 600 line.env\n\nRun ``tools/LineWebhook.py`` behind a Synology HTTPS reverse proxy to capture\nthe ``groupId`` from a real group event. It verifies ``X-Line-Signature``\nbefore writing a redacted JSONL record. Run ``tools/LineImageServer.py`` on\nlocalhost; expose only its signed JPEG/PNG endpoint through the same HTTPS\nreverse proxy. ``LINE_IMAGE_ROOTS`` limits which NAS paths can be served and\ntokens expire.\n\nSet ``LINE_GROUP_WHITELIST`` to the exact group IDs you approved, and register\nthe same group ID as the ``SMS_ID`` of a user whose ``SMS_TYPE`` is\n``LINE MESSAGING API``. The daily selector remains the existing Telegram\nselector; LINE only transports its selected thumbnails in batches of at most\nfive message objects.\n\nExample long-running services:\n\n.. code-block:: sh\n\n\t$ . line.env\n\t$ python tools/LineWebhook.py --channel-secret "$LINE_CHANNEL_SECRET" --capture-file line-group-events.jsonl\n\t$ python tools/LineImageServer.py --listen 127.0.0.1 --port 18080 --base-url "$LINE_IMAGE_BASE_URL" --secret "$LINE_IMAGE_SIGNING_SECRET" --root "$LINE_IMAGE_ROOTS"\n\nExample daily push task:\n\n.. code-block:: sh\n\n\t$ . line.env\n\t$ python DailyPushPhotoThisDay.py\n\nUse LINE Developers Console to enable Messaging API for a LINE Official\nAccount, issue the channel access token, enable group chats and webhooks,\nset the public webhook URL, then use Verify. The free-message plan varies by\nregion and counts recipients; monitor LINE Official Account Manager as well\nas the local JSONL usage log.
+
+LINE Messaging API
+~~~~~~~~~~~~~~~~~~
+
+LINE Notify is no longer used for new delivery. The Messaging API transport
+requires environment variables; copy ``line.env.example`` to a private NAS
+file and fill in the values. Never commit that private file.
+
+.. code-block:: sh
+
+	$ cp line.env.example line.env
+	$ chmod 600 line.env
+
+Run ``tools/LineWebhook.py`` behind a Synology HTTPS reverse proxy to capture
+the ``groupId`` from a real group event. It verifies ``X-Line-Signature``
+before writing a redacted JSONL record. Run ``tools/LineImageServer.py`` on
+localhost; expose only its signed JPEG/PNG endpoint through the same HTTPS
+reverse proxy. ``LINE_IMAGE_ROOTS`` limits which NAS paths can be served and
+tokens expire.
+
+Set ``LINE_GROUP_WHITELIST`` to the exact group IDs you approved, and register
+the same group ID as the ``SMS_ID`` of a user whose ``SMS_TYPE`` is
+``LINE MESSAGING API``. The daily selector remains the existing Telegram
+selector; LINE only transports its selected thumbnails in batches of at most
+five message objects.
+
+Example long-running services:
+
+.. code-block:: sh
+
+	$ . line.env
+	$ python tools/LineWebhook.py --channel-secret "$LINE_CHANNEL_SECRET" --capture-file line-group-events.jsonl
+	$ python tools/LineImageServer.py --listen 127.0.0.1 --port 18080 --base-url "$LINE_IMAGE_BASE_URL" --secret "$LINE_IMAGE_SIGNING_SECRET" --root "$LINE_IMAGE_ROOTS"
+
+Example daily push task:
+
+.. code-block:: sh
+
+	$ . line.env
+	$ python DailyPushPhotoThisDay.py
+
+Use LINE Developers Console to enable Messaging API for a LINE Official
+Account, issue the channel access token, enable group chats and webhooks,
+set the public webhook URL, then use Verify. The free-message plan varies by
+region and counts recipients; monitor LINE Official Account Manager as well
+as the local JSONL usage log.
 Preview
 ~~~~~~~
 * Telegram MediaGroup Sample
