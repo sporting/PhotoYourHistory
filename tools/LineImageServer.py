@@ -27,8 +27,11 @@ class _Handler(BaseHTTPRequestHandler):
             if content_type not in ('image/jpeg', 'image/png'):
                 raise ValueError('only JPEG and PNG thumbnails are allowed')
             size = os.path.getsize(path)
-            if size > 10 * 1024 * 1024:
-                raise ValueError('image is larger than LINE original image limit')
+            # The same signed thumbnail URL is used for both LINE fields, so
+            # enforce the stricter preview limit rather than risk a rejected
+            # image message because previewImageUrl is too large.
+            if size > 1 * 1024 * 1024:
+                raise ValueError('thumbnail is larger than LINE preview image limit')
             self.send_response(200)
             self.send_header('Content-Type', content_type)
             self.send_header('Content-Length', str(size))
