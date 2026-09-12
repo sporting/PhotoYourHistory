@@ -183,6 +183,49 @@ Add Task In Synology Nas
 	$ source env/bin/activate
 	$ PYTHONIOENCODING=utf-8 python DailyPushPhotoThisDay.py
 
+Index Audit
+~~~~~~~~~~~
+``tools/AuditPhotoIndex.py`` audits the photo index without changing the
+database, indexed files, or source photos/videos. It opens SQLite in read-only
+mode and writes CSV/JSON findings to the report directory.
+
+Run it on the NAS before changing indexing logic:
+
+.. code-block:: sh
+
+	$ cd [YOUR_REPOSITORY_DIRECTORY]
+	$ source env/bin/activate
+	$ python tools/AuditPhotoIndex.py --db SaPhoto.db --output-dir audit-report
+
+The default scan roots come from ``PARSER_DIRECTORY`` rows marked as root
+directories. To audit explicit roots instead, repeat ``--root``:
+
+.. code-block:: sh
+
+	$ python tools/AuditPhotoIndex.py --db SaPhoto.db --root /volume1/photo --root /volume2/archive --output-dir audit-report
+
+The report directory contains ``audit_summary.json``, ``missing_from_db.csv``,
+``db_missing_from_filesystem.csv``, ``unsupported_extensions.csv``, and
+``null_photo_date.csv``.
+
+Backfill Missing Index Rows
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The normal indexer no longer trusts directory mtime and does not delete stale
+rows after a partial scan. Use the read-only audit first, then review
+``missing_from_db.csv``. ``tools/BackfillPhotoIndex.py`` is a dry run unless
+``--apply`` is explicitly supplied; it only inserts missing database rows and
+never moves, deletes, or modifies source photos/videos.
+
+.. code-block:: sh
+
+	$ python tools/BackfillPhotoIndex.py --db SaPhoto.db
+	$ python tools/BackfillPhotoIndex.py --db SaPhoto.db --apply
+
+If the audit reports unsupported extensions, install a decoder/indexing rule
+for that format before backfilling it. An audit with scan errors must be
+resolved and rerun before using the result as a completeness statement.
+
 Preview
 ~~~~~~~
 * Telegram MediaGroup Sample
