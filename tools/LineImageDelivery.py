@@ -63,7 +63,10 @@ class SignedImageDelivery:
         if not allowed or not os.path.isfile(allowed):
             raise ValueError('image path is outside LINE_IMAGE_ROOTS or missing')
         token = self._encode({'path': allowed, 'exp': int(time.time()) + self.ttl_seconds})
-        return self.base_url + '/line-image?' + urlencode({'token': token}, quote_via=quote)
+        url = self.base_url + '/line-image?' + urlencode({'token': token}, quote_via=quote)
+        if len(url) > 2000:
+            raise ValueError('signed image URL exceeds LINE URL length limit')
+        return url
 
     def path_from_token(self, token):
         return self._decode(token)
