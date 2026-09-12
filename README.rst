@@ -306,6 +306,7 @@ Account, issue the channel access token, enable group chats and webhooks,
 set the public webhook URL, then use Verify. The free-message plan varies by
 region and counts recipients; monitor LINE Official Account Manager as well
 as the local JSONL usage log.
+
 Preview
 ~~~~~~~
 * Telegram MediaGroup Sample
