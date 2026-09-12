@@ -226,6 +226,40 @@ If the audit reports unsupported extensions, install a decoder/indexing rule
 for that format before backfilling it. An audit with scan errors must be
 resolved and rerun before using the result as a completeness statement.
 
+Index Performance and Database Size
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The daily indexer now enumerates each monitored directory once, preloads the
+existing paths for that directory, updates existing batch timestamps with one
+statement, inserts new rows with ``executemany``, and commits once per
+monitored directory. It does not rewrite unchanged metadata or run automatic
+obsolete-row deletion after a partial scan.
+
+Create a read-only baseline before and after deployment:
+
+.. code-block:: sh
+
+\t$ python tools/IndexBenchmark.py --db SaPhoto.db --root /volume1/photo
+\t$ python tools/IndexBenchmark.py --db SaPhoto.db --root /volume1/photo --run
+
+The first command records file counts, database bytes, META bytes, SQLite
+pages/free-list pages, scan time, and scan errors. ``--run`` benchmarks the
+batch indexer against a temporary SQLite backup, never the production DB.
+Keep the JSON output with the deployment record so the comparison is
+repeatable.
+
+Use the storage report to identify whether META, indexes, or free pages are
+the main contributor:
+
+.. code-block:: sh
+
+\t$ python tools/IndexDatabaseMaintenance.py --db SaPhoto.db
+
+Compaction is never automatic. After saving the report and making a backup,
+run ``--vacuum --backup /safe/path/SaPhoto.before-vacuum.db`` during a quiet
+maintenance window. The backup is made with SQLite's backup API and the
+command never touches source photos/videos.
+
 Preview
 ~~~~~~~
 * Telegram MediaGroup Sample
