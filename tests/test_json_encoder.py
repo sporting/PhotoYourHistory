@@ -1,7 +1,11 @@
 import json
+import sys
 import unittest
 from fractions import Fraction
 
+# test_batch_index installs lightweight dependency modules for its isolated import.
+# Remove its JSON encoder stub so this test exercises the production implementation.
+sys.modules.pop('db.JsonEncoder', None)
 from db.JsonEncoder import MyEncoder
 
 try:
