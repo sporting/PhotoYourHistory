@@ -1,5 +1,9 @@
+import sys
 import unittest
 
+# test_batch_index installs a lightweight ExifHelper stub for its isolated import.
+# Remove the stub so this test exercises the production implementation.
+sys.modules.pop('graph.ExifHelper', None)
 from graph.ExifHelper import ExifHelper
 from PIL.TiffImagePlugin import IFDRational
 
