@@ -26,7 +26,7 @@ UNSUPPORTED_IMAGE_EXTENSIONS = {
     '.heic', '.heif', '.webp', '.tif', '.tiff', '.dng', '.cr2', '.cr3',
     '.nef', '.arw', '.raf', '.orf', '.rw2', '.pef', '.srw',
 }
-SKIPPED_DIRECTORY_NAMES = {'@eadir', '#recycle', '.thumbnail'}
+SKIPPED_DIRECTORY_NAMES = {'@eadir', '#recycle', '.thumbnail', '_vti_cnf'}
 
 
 def path_key(directory, filename):

@@ -10,7 +10,7 @@ import fnmatch
 import os
 
 
-SKIPPED_DIRECTORY_NAMES = frozenset(("@eadir", "#recycle", ".thumbnail"))
+SKIPPED_DIRECTORY_NAMES = frozenset(("@eadir", "#recycle", ".thumbnail", "_vti_cnf"))
 
 
 def _iter_files(path, extensions, localtimestamp=None, recursive=False):

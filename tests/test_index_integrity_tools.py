@@ -13,6 +13,7 @@ class IndexIntegrityTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.root = os.path.join(self.temp.name, 'photos')
         os.makedirs(os.path.join(self.root, 'nested', '@eaDir'))
+        os.makedirs(os.path.join(self.root, 'nested', '_vti_cnf'))
         self.db_path = os.path.join(self.temp.name, 'SaPhoto.db')
         connection = sqlite3.connect(self.db_path)
         connection.executescript('''
@@ -45,6 +46,7 @@ class IndexIntegrityTests(unittest.TestCase):
         self.touch('indexed.jpg')
         self.touch('nested/new.JPG')
         self.touch('nested/@eaDir/ignored.jpg')
+        self.touch('nested/_vti_cnf/ignored.jpg')
         files = list(ImageFileHelper().getFiles(self.root, None, True))
         self.assertEqual(2, len(files))
         self.assertTrue(any(path.endswith('new.JPG') for path in files))
