@@ -15,6 +15,10 @@ class ExifHelperTests(unittest.TestCase):
     def test_rational_value_supports_legacy_pair(self):
         self.assertEqual(0.5, ExifHelper._rational_value((1, 2)))
 
+    def test_rational_value_skips_zero_denominator(self):
+        self.assertIsNone(ExifHelper._rational_value(IFDRational(0, 0)))
+        self.assertIsNone(ExifHelper._rational_value((0, 0)))
+
 
 if __name__ == '__main__':
     unittest.main()
