@@ -30,8 +30,13 @@ class ExifHelper:
         """Convert Pillow rational values and legacy numerator/denominator pairs."""
         try:
             return float(value)
+        except ZeroDivisionError:
+            return None
         except (TypeError, ValueError):
-            return float(value[0]) / float(value[1])
+            try:
+                return float(value[0]) / float(value[1])
+            except ZeroDivisionError:
+                return None
 
     def getExif(self,filename):
         try:
@@ -63,26 +68,32 @@ class ExifHelper:
 
                             if sub_decoded == self.TAG_GPSTIMESTAMP:
                                 gs = val[t]
-                                gps_time = ':'.join(map('{0:0>2}'.format,
-                                    (int(self._rational_value(gs[0])),
-                                     int(self._rational_value(gs[1])),
-                                     int(self._rational_value(gs[2])))))
+                                gps_values = [self._rational_value(part) for part in gs]
+                                if all(value is not None for value in gps_values):
+                                    gps_time = ':'.join(map('{0:0>2}'.format,
+                                        (int(gps_values[0]),
+                                         int(gps_values[1]),
+                                         int(gps_values[2]))))
                             elif sub_decoded == self.TAG_GPSDATESTAMP:
                                 gps_date = val[t]
                             elif sub_decoded == self.TAG_GPS_LONGTITUDE_REF:
                                 gps_E = 1 if val[t] =='E' else -1
                             elif sub_decoded == self.TAG_GPS_LONGTITUDE:
                                 gsLong = val[t]
-                                gps_Long = (self._rational_value(gsLong[0]) +
-                                             self._rational_value(gsLong[1]) / 60 +
-                                             self._rational_value(gsLong[2]) / 3600)
+                                gps_values = [self._rational_value(part) for part in gsLong]
+                                if all(value is not None for value in gps_values):
+                                    gps_Long = (gps_values[0] +
+                                                 gps_values[1] / 60 +
+                                                 gps_values[2] / 3600)
                             elif sub_decoded == self.TAG_GPS_LATITUDE_REF:
                                 gps_N = 1 if val[t] =='N' else -1
                             elif sub_decoded == self.TAG_GPS_LATITUDE:
                                 gsLat = val[t]
-                                gps_Lat = (self._rational_value(gsLat[0]) +
-                                            self._rational_value(gsLat[1]) / 60 +
-                                            self._rational_value(gsLat[2]) / 3600)
+                                gps_values = [self._rational_value(part) for part in gsLat]
+                                if all(value is not None for value in gps_values):
+                                    gps_Lat = (gps_values[0] +
+                                                gps_values[1] / 60 +
+                                                gps_values[2] / 3600)
                         if gps_date and gps_time:
                             dt = datetime.strptime(gps_date + ' ' + gps_time, self.DATETIME_FORMAT).replace(tzinfo=self.UTC)
                             res[self.KEY_GPSDT] = dt.strftime(self.DATETIME_FORMAT)
