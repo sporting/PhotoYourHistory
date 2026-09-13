@@ -19,7 +19,10 @@ class MyEncoder(json.JSONEncoder):
 
         if ((IFDRational and isinstance(obj, IFDRational))
                 or isinstance(obj, numbers.Rational)):
-            value = float(obj)
+            try:
+                value = float(obj)
+            except ZeroDivisionError:
+                return None
             return value if math.isfinite(value) else None
 
         return json.JSONEncoder.default(self, obj)
