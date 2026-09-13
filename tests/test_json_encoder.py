@@ -25,6 +25,12 @@ class JsonEncoderTests(unittest.TestCase):
         payload = json.dumps({'ratio': Fraction(1, 3)}, cls=MyEncoder)
         self.assertEqual(1.0 / 3.0, json.loads(payload)['ratio'])
 
+    def test_encodes_zero_denominator_ifd_rational_as_null(self):
+        if IFDRational is None:
+            self.skipTest('Pillow is not installed')
+        payload = json.dumps({'ratio': IFDRational(0, 0)}, cls=MyEncoder)
+        self.assertIsNone(json.loads(payload)['ratio'])
+
 
 if __name__ == '__main__':
     unittest.main()
