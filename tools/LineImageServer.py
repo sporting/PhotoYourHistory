@@ -59,8 +59,11 @@ def main(argv=None):
     parser.add_argument('--root', action='append', required=True)
     parser.add_argument('--ttl-seconds', type=int, default=172800)
     args = parser.parse_args(argv)
+    roots = []
+    for value in args.root:
+        roots.extend(item.strip() for item in value.split(',') if item.strip())
     _Handler.delivery = SignedImageDelivery(
-        args.base_url, args.secret, args.root, args.ttl_seconds)
+        args.base_url, args.secret, roots, args.ttl_seconds)
     server = ThreadingHTTPServer((args.listen, args.port), _Handler)
     print('Serving signed LINE thumbnails on {0}:{1}'.format(args.listen, args.port))
     server.serve_forever()
