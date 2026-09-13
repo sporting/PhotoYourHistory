@@ -38,6 +38,18 @@ class ExifHelper:
             except ZeroDivisionError:
                 return None
 
+    @classmethod
+    def _gps_rational_values(cls, value):
+        """Return three GPS components, or None for malformed EXIF values."""
+        try:
+            parts = list(value)
+        except TypeError:
+            return None
+        if len(parts) != 3:
+            return None
+        values = [cls._rational_value(part) for part in parts]
+        return values if all(item is not None for item in values) else None
+
     def getExif(self,filename):
         try:
             img = Image.open(filename)
@@ -68,8 +80,8 @@ class ExifHelper:
 
                             if sub_decoded == self.TAG_GPSTIMESTAMP:
                                 gs = val[t]
-                                gps_values = [self._rational_value(part) for part in gs]
-                                if all(value is not None for value in gps_values):
+                                gps_values = self._gps_rational_values(gs)
+                                if gps_values is not None:
                                     gps_time = ':'.join(map('{0:0>2}'.format,
                                         (int(gps_values[0]),
                                          int(gps_values[1]),
@@ -80,8 +92,8 @@ class ExifHelper:
                                 gps_E = 1 if val[t] =='E' else -1
                             elif sub_decoded == self.TAG_GPS_LONGTITUDE:
                                 gsLong = val[t]
-                                gps_values = [self._rational_value(part) for part in gsLong]
-                                if all(value is not None for value in gps_values):
+                                gps_values = self._gps_rational_values(gsLong)
+                                if gps_values is not None:
                                     gps_Long = (gps_values[0] +
                                                  gps_values[1] / 60 +
                                                  gps_values[2] / 3600)
@@ -89,8 +101,8 @@ class ExifHelper:
                                 gps_N = 1 if val[t] =='N' else -1
                             elif sub_decoded == self.TAG_GPS_LATITUDE:
                                 gsLat = val[t]
-                                gps_values = [self._rational_value(part) for part in gsLat]
-                                if all(value is not None for value in gps_values):
+                                gps_values = self._gps_rational_values(gsLat)
+                                if gps_values is not None:
                                     gps_Lat = (gps_values[0] +
                                                 gps_values[1] / 60 +
                                                 gps_values[2] / 3600)
