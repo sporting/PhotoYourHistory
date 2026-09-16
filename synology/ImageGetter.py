@@ -2,7 +2,7 @@
 
 import os
 from PIL import UnidentifiedImageError
-from graph.ImageProcess import ImageProcessHelper
+from graph.ImageProcess import ImageProcessHelper, SourcePhotoDecodeError
 
 """
     Get the photo thumbnail.
@@ -27,9 +27,9 @@ class ImageThumbnailGetter:
         try:
             return self.ImageHelper.thumbnail(pic, (1024, 1024), thumbnailFolder,
                                               'SYNOPHOTO_THUMB_XL.jpg')
-        except UnidentifiedImageError as error:
-            # Skip only unrecognized source images. Storage/write failures should
-            # still interrupt the run so they are not mistaken for bad photos.
+        except (UnidentifiedImageError, SourcePhotoDecodeError) as error:
+            # Only known image-content failures are skippable. NAS I/O and
+            # output write failures must still fail the job visibly.
             print('WARNING: unreadable source photo skipped: {0}: {1}'.format(
                 pic, error))
             return None
