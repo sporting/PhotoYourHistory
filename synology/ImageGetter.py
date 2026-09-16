@@ -27,14 +27,11 @@ class ImageThumbnailGetter:
         try:
             return self.ImageHelper.thumbnail(pic, (1024, 1024), thumbnailFolder,
                                               'SYNOPHOTO_THUMB_XL.jpg')
-        except (UnidentifiedImageError, OSError, ValueError) as error:
-            # A damaged or unsupported source must not abort other photos/users.
-            # Only source-image decoding failures should be skipped. Output write
-            # failures must still propagate so operators can address storage issues.
-            if os.path.exists(f):
-                raise
-            print('WARNING: thumbnail unavailable for {0}: {1}: {2}'.format(
-                pic, type(error).__name__, error))
+        except UnidentifiedImageError as error:
+            # Skip only unrecognized source images. Storage/write failures should
+            # still interrupt the run so they are not mistaken for bad photos.
+            print('WARNING: unreadable source photo skipped: {0}: {1}'.format(
+                pic, error))
             return None
 
     def getThumbnail(self, pic):
